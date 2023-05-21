@@ -1,16 +1,17 @@
 
 from typing import List
 
-from py2appsigner.Commands import zipsign
 
 from click.testing import CliRunner
+
+from py2appsigner.Commands import py2appSign
 
 
 def testZipSignHelp():
 
     runner: CliRunner = CliRunner()
 
-    result = runner.invoke(zipsign, ['--help'])
+    result = runner.invoke(py2appSign, ['--help'])
 
     assert result.exit_code == 0
 
@@ -28,9 +29,9 @@ def testZipSignHelp():
         '  --help                        Show this message and exit.'
     )
     actualOutputList: List[str] = result.output.split('\n')
-    assert len(actualOutputList) == 12, 'Help output mismatch'
+    assert len(actualOutputList) == 30, 'Help output mismatch'
 
-    assert actualOutputList[5] == '  -b, --projects-base TEXT      Projects base, overrides environment variables', 'Help line does not match'
+    assert actualOutputList[17] == '  -b, --projects-base TEXT      Projects base, overrides environment variable', 'Help line does not match'
 
 
 if __name__ == "__main__":
