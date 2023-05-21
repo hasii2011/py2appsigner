@@ -7,7 +7,6 @@ from json import load as jsonLoad
 from importlib.resources import files
 from importlib.abc import Traversable
 
-from click import clear
 from click import group
 from click import pass_context
 from click import pass_obj
@@ -61,7 +60,6 @@ def py2appSign(ctx, python_version: str, application_name: str, projects_base: s
     The environment variable for project directory is 'PROJECT'.  This is just the
     simple project directory name.
     """
-
     setUpLogging()
 
     environment: Environment     = Environment(pythonVersion=python_version,
@@ -77,7 +75,6 @@ def py2appSign(ctx, python_version: str, application_name: str, projects_base: s
 @pass_obj
 def zipSign(environment: Environment):
 
-    clear()
     zipsign: ZipSign = ZipSign(environment=environment)
     zipsign.execute()
 
@@ -107,4 +104,4 @@ def appVerify(environment: Environment):
 
 
 if __name__ == '__main__':
-    py2appSign(['--python-version', '3.10', '--application-name', 'pyut', '--verbose', 'zipsign'])
+    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'zipsign'])

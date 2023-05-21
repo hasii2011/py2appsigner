@@ -12,13 +12,15 @@ class Environment:
     """
     """
     ENV_PROJECTS_BASE: str = 'PROJECTS_BASE'
-    ENV_PROJECT: str = 'PROJECT'
+    ENV_PROJECT:       str = 'PROJECT'
+    IDENTITY:          str = 'IDENTITY'
 
     pythonVersion:    str = ''
     applicationName:  str = ''
     projectsBase:     str = ''
     projectDirectory: str = ''
     verbose:          bool = False
+    identity:         str  = ''
 
     def __init__(self, pythonVersion: str, applicationName: str, projectsBase: str = '', projectDirectory: str = '', verbose: bool = False):
         """
@@ -50,6 +52,11 @@ class Environment:
                 self.projectDirectory = osEnvironment[Environment.ENV_PROJECT]
             except KeyError:
                 raise ClickException(message='I do not know the name of the project directory')
+
+        try:
+            self.identity = osEnvironment[Environment.IDENTITY]
+        except KeyError:
+            raise ClickException(message='You must provide the IDENTITY environment variable')
 
     @property
     def validProjectsBase(self) -> bool:
