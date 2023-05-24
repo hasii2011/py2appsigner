@@ -22,7 +22,7 @@ class Environment:
     verbose:          bool = False
     identity:         str  = ''
 
-    def __init__(self, pythonVersion: str, applicationName: str, projectsBase: str = '', projectDirectory: str = '', verbose: bool = False):
+    def __init__(self, pythonVersion: str, applicationName: str, projectsBase: str = '', projectDirectory: str = '', identity: str = '', verbose: bool = False):
         """
         Arguments for the command line always override the environment variables
 
@@ -39,6 +39,7 @@ class Environment:
         self.applicationName  = applicationName
         self.projectsBase     = projectsBase
         self.projectDirectory = projectDirectory
+        self.identity         = identity
         self.verbose          = verbose
 
         if self.projectsBase == '' or self.projectsBase is None:
@@ -53,10 +54,11 @@ class Environment:
             except KeyError:
                 raise ClickException(message='I do not know the name of the project directory')
 
-        try:
-            self.identity = osEnvironment[Environment.IDENTITY]
-        except KeyError:
-            raise ClickException(message='You must provide the IDENTITY environment variable')
+        if self.identity == '' or self.identity is None:
+            try:
+                self.identity = osEnvironment[Environment.IDENTITY]
+            except KeyError:
+                raise ClickException(message='You must provide the IDENTITY environment variable')
 
     @property
     def validProjectsBase(self) -> bool:

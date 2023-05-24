@@ -14,6 +14,7 @@ from click import version_option
 from click import option
 
 from py2appsigner import __version__ as version
+from py2appsigner.AppSign import AppSign
 
 from py2appsigner.Environment import Environment
 from py2appsigner.ZipSign import ZipSign
@@ -43,11 +44,12 @@ def setUpLogging():
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
+@option('--identity',          '-i', required=False, help='Code signing identity')
 @option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
 @pass_context
-def py2appSign(ctx, python_version: str, application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
+def py2appSign(ctx, python_version: str, application_name: str, projects_base: str = '', project_directory: str = '', identity: str = '', verbose: bool = False):
     """
-    Specify a python version that the py2app application is using
+    Specify a python version that the py2app application is using.
     \b
 
     Specify the application name created by py2app
@@ -55,6 +57,10 @@ def py2appSign(ctx, python_version: str, application_name: str, projects_base: s
 
     The environment variable for projects base is 'PROJECTS_BASE'.  This is a fully qualified
     directory name.
+    \b
+
+    identity -- For code signing, a digital identity must be stored in a keychain that is on the calling user's keychain search list.
+    if not specified then the value must be set in the 'IDENTITY' environment variable
     \b
 
     The environment variable for project directory is 'PROJECT'.  This is just the
@@ -66,6 +72,7 @@ def py2appSign(ctx, python_version: str, application_name: str, projects_base: s
                                                applicationName=application_name,
                                                projectsBase=projects_base,
                                                projectDirectory=project_directory,
+                                               identity=identity,
                                                verbose=verbose)
 
     ctx.obj = environment
@@ -80,9 +87,28 @@ def zipSign(environment: Environment):
 
 
 @py2appSign.command()
+@option('--fix-lib', '-f', required=False, is_flag=True, help='Fix broken library ')
 @pass_obj
-def appSign(environment: Environment):
-    print(f'{environment=}')
+def appSign(environment: Environment, fix_lib: bool = False):
+    # noinspection SpellCheckingInspection
+    """
+    fix-lib gets the following dynamic library from Homebrew.  And copies it into the
+    Python virtual environment;  Works only on Apple Silicon OS X
+    and with Homebrew installed
+
+    See: https://stackoverflow.com/questions/62095338/py2app-fails-macos-signing-on-liblzma-5-dylib
+
+    On Intel OS X
+
+    /usr/local/Cellar/xz/5.2.5/lib/liblzma.5.dylib
+
+    Apple Silicon
+
+    /opt/homebrew/opt/xz/lib/liblzma.5.dylib
+
+    """
+    applicationSign: AppSign = AppSign(environment=environment, fixLib=fix_lib)
+    applicationSign.execute()
 
 
 @py2appSign.command()
@@ -104,4 +130,6 @@ def appVerify(environment: Environment):
 
 
 if __name__ == '__main__':
-    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'zipsign'])
+    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'zipsign'])
+    # noinspection SpellCheckingInspection
+    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'appsign'])
