@@ -37,7 +37,7 @@ CLEAN_UP_CRUD: List[str] = [
 ]
 
 SHARED_OBJECT_LIBRARY_WILDCARD:       str = '*.so'
-MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD: str = '*.dylub'
+MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD: str = '*.dylib'
 
 
 class AppSign(CommandBase):
@@ -57,6 +57,7 @@ class AppSign(CommandBase):
         self._cleanupCrud()
         self._signLibraries()
         self._signFrameworks()
+        self._signPythonApp()
         self._signApplication()
 
     def _fixLibrary(self):
@@ -115,6 +116,13 @@ class AppSign(CommandBase):
         framework:     str = f'{self._applicationName}/Contents/Frameworks/Python.framework/Versions/3.10/Python'
         signFramework: str = f'{self._codeSignCommand} {framework}'
         self._runCommand(signFramework)
+
+    def _signPythonApp(self):
+        # codesign --sign "${IDENTITY}" ${OPTIONS} "${FULL_APP_NAME}/Contents/MacOS/python"
+        pythonApp:  str = f'{self._applicationName}/Contents/MacOS/python'
+        signPython: str = f'{self._codeSignCommand} {pythonApp}'
+
+        self._runCommand(signPython)
 
     def _signApplication(self):
         # codesign --sign "${IDENTITY}" ${OPTIONS} "${FULL_APP_NAME}/Contents/MacOS/${APPLICATION_NAME}"
