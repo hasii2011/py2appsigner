@@ -120,6 +120,8 @@ def appVerify(environment: Environment):
     print(f'{environment=}')
 
 
+@command
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
