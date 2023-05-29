@@ -7,6 +7,7 @@ from json import load as jsonLoad
 from importlib.resources import files
 from importlib.abc import Traversable
 
+from click import command
 from click import group
 from click import pass_context
 from click import pass_obj
@@ -14,6 +15,7 @@ from click import version_option
 from click import option
 
 from py2appsigner import __version__ as version
+from py2appsigner.AppNotarize import AppNotarize
 from py2appsigner.AppSign import AppSign
 
 from py2appsigner.Environment import Environment
@@ -59,12 +61,12 @@ def py2appSign(ctx, python_version: str, application_name: str, projects_base: s
     directory name.
     \b
 
+    The environment variable for project directory is 'PROJECT'.  This is just the
+    simple project directory name.
+
     identity -- For code signing, a digital identity must be stored in a keychain that is on the calling user's keychain search list.
     if not specified then the value must be set in the 'IDENTITY' environment variable
     \b
-
-    The environment variable for project directory is 'PROJECT'.  This is just the
-    simple project directory name.
     """
     setUpLogging()
 
@@ -92,7 +94,7 @@ def zipSign(environment: Environment):
 def appSign(environment: Environment, fix_lib: bool = False):
     # noinspection SpellCheckingInspection
     """
-    fix-lib gets the following dynamic library from Homebrew.  And copies it into the
+    fix-lib gets the following dynamic library from Homebrew;  And copies it into the
     Python virtual environment;  Works only on Apple Silicon OS X
     and with Homebrew installed
 
@@ -105,16 +107,9 @@ def appSign(environment: Environment, fix_lib: bool = False):
     Apple Silicon
 
     /opt/homebrew/opt/xz/lib/liblzma.5.dylib
-
     """
     applicationSign: AppSign = AppSign(environment=environment, fixLib=fix_lib)
     applicationSign.execute()
-
-
-@py2appSign.command()
-@pass_obj
-def appNotarize(environment: Environment):
-    print(f'{environment=}')
 
 
 @py2appSign.command()
@@ -129,7 +124,40 @@ def appVerify(environment: Environment):
     print(f'{environment=}')
 
 
+@command
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+@option('--application-name',  '-a', required=True,  help='The application name that py2app built')
+@option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
+@option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
+@option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
+def appNotarize(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
+    """
+    Specify the application name created by py2app
+    \b
+
+    The environment variable for projects base is 'PROJECTS_BASE'.  This is a fully qualified
+    directory name.
+    \b
+
+    The environment variable for project directory is 'PROJECT'.  This is just the
+    simple project directory name.
+
+    Assumes the developer stored application specific ID with the name 'APP_PASSWORD'
+
+    """
+    environment: Environment     = Environment(pythonVersion='',                    # Not Needed
+                                               applicationName=application_name,
+                                               projectsBase=projects_base,
+                                               projectDirectory=project_directory,
+                                               identity='',                         # Not needed
+                                               verbose=verbose)
+
+    applicationNotarize: AppNotarize = AppNotarize(environment=environment)
+    applicationNotarize.execute()
+
+
 if __name__ == '__main__':
-    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'zipsign'])
+    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     # noinspection SpellCheckingInspection
-    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'appsign'])
+    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'appsign'])
+    # appNotarize(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])

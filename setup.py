@@ -34,7 +34,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "py2appSign=py2appsigner.Commands:py2appSign"
+            "py2appSign=py2appsigner.Commands:py2appSign",
+            "appNotarize=py2appsigner.Commands:appNotarize"
         ]
     },
 )

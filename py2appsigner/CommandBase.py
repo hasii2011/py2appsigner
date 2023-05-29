@@ -1,8 +1,12 @@
 from logging import Logger
 from logging import getLogger
 
+from sys import stdout
+
 from subprocess import run as subProcessRun
-from subprocess import CompletedProcess
+from subprocess import check_call as subProcessCheckCall
+# from subprocess import CompletedProcess
+from subprocess import STDOUT
 
 from abc import abstractmethod
 from abc import ABC
@@ -11,9 +15,11 @@ from click import secho
 
 from py2appsigner.Environment import Environment
 
-BUILD_DIR:             str = '/dist/'
+BUILD_DIR:  str = '/dist/'
+ZIP_SUFFIX: str = 'zip'
 
 CODE_SIGN_TOOL:            str = '/usr/bin/codesign'
+DITTO_TOOL:                str = '/usr/bin/ditto'
 
 COPY_OPTIONS_VERBOSE:          str = '-vp'
 COPY_OPTIONS_QUIET:            str = '-p'
@@ -50,10 +56,17 @@ class CommandBase(ABC):
 
     def _runCommand(self,  command: str):
 
-        completedProcess: CompletedProcess = subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
-        self._echoCommandAndStatus(command, completedProcess.returncode)
-
-    def _echoCommandAndStatus(self, command: str, status: int):
         if self._environment.verbose is True:
-            secho(command)
-            secho(f'{status=}')
+            secho(self._execute(command=command))
+        else:
+            # completedProcess: CompletedProcess = subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
+            subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
+            # self._echoCommandAndStatus(command, completedProcess.returncode)
+
+    # def _echoCommandAndStatus(self, command: str, status: int):
+    #     if self._environment.verbose is True:
+    #         secho(command)
+    #         secho(f'{status=}')
+
+    def _execute(self, command):
+        subProcessCheckCall(command, shell=True, stdout=stdout, stderr=STDOUT)
