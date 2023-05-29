@@ -18,6 +18,7 @@ from py2appsigner import __version__ as version
 
 from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
+from py2appsigner.ApplicationStaple import ApplicationStaple
 
 from py2appsigner.Environment import Environment
 from py2appsigner.ZipSign import ZipSign
@@ -154,12 +155,23 @@ def appNotarize(application_name: str, projects_base: str = '', project_director
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
-def appStaple(application_name: str):
-    pass
+@option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
+def appStaple(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
+
+    environment: Environment     = Environment(pythonVersion='',                    # Not Needed
+                                               applicationName=application_name,
+                                               projectsBase=projects_base,
+                                               projectDirectory=project_directory,
+                                               identity='',                         # Not needed
+                                               verbose=verbose)
+
+    applicationStaple: ApplicationStaple = ApplicationStaple(environment=environment)
+    applicationStaple.execute()
 
 
 if __name__ == '__main__':
-    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
+    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     # noinspection SpellCheckingInspection
     # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'appsign'])
     # appNotarize(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
+    appStaple(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
