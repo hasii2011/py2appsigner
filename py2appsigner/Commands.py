@@ -15,8 +15,9 @@ from click import version_option
 from click import option
 
 from py2appsigner import __version__ as version
-from py2appsigner.AppNotarize import AppNotarize
-from py2appsigner.AppSign import AppSign
+
+from py2appsigner.ApplicationNotarize import ApplicationNotarize
+from py2appsigner.ApplicationSign import ApplicationSign
 
 from py2appsigner.Environment import Environment
 from py2appsigner.ZipSign import ZipSign
@@ -108,8 +109,9 @@ def appSign(environment: Environment, fix_lib: bool = False):
 
     /opt/homebrew/opt/xz/lib/liblzma.5.dylib
     """
-    applicationSign: AppSign = AppSign(environment=environment, fixLib=fix_lib)
+    applicationSign: ApplicationSign = ApplicationSign(environment=environment, fixLib=fix_lib)
     applicationSign.execute()
+
 
 @py2appSign.command()
 @pass_obj
@@ -143,7 +145,7 @@ def appNotarize(application_name: str, projects_base: str = '', project_director
                                                identity='',                         # Not needed
                                                verbose=verbose)
 
-    applicationNotarize: AppNotarize = AppNotarize(environment=environment)
+    applicationNotarize: ApplicationNotarize = ApplicationNotarize(environment=environment)
     applicationNotarize.execute()
 
 

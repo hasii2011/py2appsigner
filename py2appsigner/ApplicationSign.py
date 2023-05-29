@@ -40,7 +40,7 @@ SHARED_OBJECT_LIBRARY_WILDCARD:       str = '*.so'
 MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD: str = '*.dylib'
 
 
-class AppSign(CommandBase):
+class ApplicationSign(CommandBase):
 
     def __init__(self, environment: Environment, fixLib: bool):
 

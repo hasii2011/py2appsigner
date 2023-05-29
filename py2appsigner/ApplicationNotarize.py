@@ -14,7 +14,7 @@ from py2appsigner.CommandBase import ZIP_SUFFIX
 from py2appsigner.Environment import Environment
 
 
-class AppNotarize(CommandBase):
+class ApplicationNotarize(CommandBase):
 
     def __init__(self, environment: Environment, applicationPasswordName: str = 'APP_PASSWORD'):
         super().__init__(environment=environment)
