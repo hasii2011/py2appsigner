@@ -5,7 +5,7 @@ from sys import stdout
 
 from subprocess import run as subProcessRun
 from subprocess import check_call as subProcessCheckCall
-# from subprocess import CompletedProcess
+
 from subprocess import STDOUT
 
 from abc import abstractmethod
@@ -59,14 +59,7 @@ class CommandBase(ABC):
         if self._environment.verbose is True:
             secho(self._execute(command=command))
         else:
-            # completedProcess: CompletedProcess = subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
             subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
-            # self._echoCommandAndStatus(command, completedProcess.returncode)
-
-    # def _echoCommandAndStatus(self, command: str, status: int):
-    #     if self._environment.verbose is True:
-    #         secho(command)
-    #         secho(f'{status=}')
 
     def _execute(self, command):
         subProcessCheckCall(command, shell=True, stdout=stdout, stderr=STDOUT)
