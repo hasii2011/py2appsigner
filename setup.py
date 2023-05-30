@@ -36,7 +36,8 @@ setup(
         "console_scripts": [
             "py2appSign=py2appsigner.Commands:py2appSign",
             "appNotarize=py2appsigner.Commands:appNotarize",
-            "appStaple=py2appsigner.Commands:appStaple"
+            "appStaple=py2appsigner.Commands:appStaple",
+            "appVerify=py2appsigner.Commands:appVerify"
         ]
     },
 )

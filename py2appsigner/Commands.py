@@ -19,6 +19,7 @@ from py2appsigner import __version__ as version
 from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
 from py2appsigner.ApplicationStaple import ApplicationStaple
+from py2appsigner.ApplicationVerify import ApplicationVerify
 
 from py2appsigner.Environment import Environment
 from py2appsigner.ZipSign import ZipSign
@@ -114,12 +115,6 @@ def appSign(environment: Environment, fix_lib: bool = False):
     applicationSign.execute()
 
 
-@py2appSign.command()
-@pass_obj
-def appVerify(environment: Environment):
-    print(f'{environment=}')
-
-
 @command
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
@@ -169,6 +164,25 @@ def appStaple(application_name: str, projects_base: str = '', project_directory:
 
     applicationStaple: ApplicationStaple = ApplicationStaple(environment=environment)
     applicationStaple.execute()
+
+
+@command()
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+@option('--application-name',  '-a', required=True,  help='The application name that py2app built')
+@option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
+@option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
+@option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
+def appVerify(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
+
+    environment: Environment     = Environment(pythonVersion='',                    # Not Needed
+                                               applicationName=application_name,
+                                               projectsBase=projects_base,
+                                               projectDirectory=project_directory,
+                                               identity='',                         # Not needed
+                                               verbose=verbose)
+
+    applicationVerify: ApplicationVerify = ApplicationVerify(environment=environment)
+    applicationVerify.execute()
 
 
 if __name__ == '__main__':
