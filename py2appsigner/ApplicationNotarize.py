@@ -16,7 +16,7 @@ from py2appsigner.Environment import Environment
 
 class ApplicationNotarize(CommandBase):
 
-    def __init__(self, environment: Environment, applicationPasswordName: str = 'APP_PASSWORD'):
+    def __init__(self, environment: Environment, applicationPasswordName: str = 'NOTARY_TOOL_APP_ID'):
         super().__init__(environment=environment)
 
         self._applicationPasswordName: str = applicationPasswordName

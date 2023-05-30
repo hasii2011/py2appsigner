@@ -15,6 +15,8 @@ class Environment:
     ENV_PROJECT:       str = 'PROJECT'
     IDENTITY:          str = 'IDENTITY'
 
+    DEFAULT_NOTARY_TOOL_APP_ID_NAME: str = 'NOTARY_TOOL_APP_ID'
+
     pythonVersion:    str = ''
     applicationName:  str = ''
     projectsBase:     str = ''

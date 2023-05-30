@@ -185,6 +185,31 @@ def appVerify(application_name: str, projects_base: str = '', project_directory:
     applicationVerify.execute()
 
 
+@command()
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+@option('--keychain-profile', '-p', required=False, help='Keychain profile name storing Notary Tool Application Id')
+@option('--verbose',          '-v', required=False, is_flag=True, help='Set option to echo commands')
+def notarizationHistory(keychain_profile: str, verbose: bool = False):
+    """
+    clear
+    xcrun notarytool history --keychain-profile "NOTARY_TOOL_APP_ID"  >> notaryhistory.log
+    """
+    pass
+
+
+@command()
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+@option('--keychain-profile', '-p', required=False, help='Keychain profile name storing Notary Tool Application Id')
+@option('--verbose',          '-v', required=False, is_flag=True, help='Set option to echo commands')
+def notarizationInformation():
+    """
+    clear
+    xcrun notarytool log $notarizationId --keychain-profile "NOTARY_TOOL_APP_ID" "notary-${notarizationId}.log"
+
+    """
+    pass
+
+
 if __name__ == '__main__':
     # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     # noinspection SpellCheckingInspection
