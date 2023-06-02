@@ -7,15 +7,15 @@ from click import secho
 
 from py2appsigner.BasicEnvironment import BasicEnvironment
 
-from py2appsigner.CommandBase import BUILD_DIR
-from py2appsigner.CommandBase import CommandBase
-from py2appsigner.CommandBase import DITTO_TOOL
-from py2appsigner.CommandBase import REMOVE_OPTIONS_QUIET
-from py2appsigner.CommandBase import REMOVE_OPTIONS_VERBOSE
-from py2appsigner.CommandBase import ZIP_SUFFIX
+from py2appsigner.CommandBasic import BUILD_DIR
+from py2appsigner.CommandBasic import CommandBasic
+from py2appsigner.CommandBasic import DITTO_TOOL
+from py2appsigner.CommandBasic import REMOVE_OPTIONS_QUIET
+from py2appsigner.CommandBasic import REMOVE_OPTIONS_VERBOSE
+from py2appsigner.CommandBasic import ZIP_SUFFIX
 
 
-class ApplicationNotarize(CommandBase):
+class ApplicationNotarize(CommandBasic):
 
     def __init__(self, environment: BasicEnvironment, applicationPasswordName: str = 'NOTARY_TOOL_APP_ID'):
         super().__init__(environment=environment)

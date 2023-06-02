@@ -2,11 +2,11 @@
 from logging import Logger
 from logging import getLogger
 
-from py2appsigner.CommandBase import CommandBase
+from py2appsigner.CommandBasic import CommandBasic
 from py2appsigner.Environment import Environment
 
 
-class ApplicationVerify(CommandBase):
+class ApplicationVerify(CommandBasic):
 
     def __init__(self, environment: Environment):
 

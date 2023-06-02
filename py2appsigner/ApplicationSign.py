@@ -9,13 +9,13 @@ from click import secho
 
 from tqdm import tqdm
 
-from py2appsigner.CommandBase import CODE_SIGN_OPTIONS_QUIET
-from py2appsigner.CommandBase import CODE_SIGN_OPTIONS_VERBOSE
-from py2appsigner.CommandBase import CODE_SIGN_TOOL
-from py2appsigner.CommandBase import COPY_OPTIONS_VERBOSE
-from py2appsigner.CommandBase import COPY_OPTIONS_QUIET
-from py2appsigner.CommandBase import REMOVE_OPTIONS_QUIET
-from py2appsigner.CommandBase import REMOVE_OPTIONS_VERBOSE
+from py2appsigner.CommandBasic import CODE_SIGN_OPTIONS_QUIET
+from py2appsigner.CommandBasic import CODE_SIGN_OPTIONS_VERBOSE
+from py2appsigner.CommandBasic import CODE_SIGN_TOOL
+from py2appsigner.CommandBasic import COPY_OPTIONS_VERBOSE
+from py2appsigner.CommandBasic import COPY_OPTIONS_QUIET
+from py2appsigner.CommandBasic import REMOVE_OPTIONS_QUIET
+from py2appsigner.CommandBasic import REMOVE_OPTIONS_VERBOSE
 
 from py2appsigner.CommandExtended import CommandExtended
 

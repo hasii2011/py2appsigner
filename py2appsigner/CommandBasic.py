@@ -29,7 +29,7 @@ CODE_SIGN_OPTIONS_VERBOSE:     str = '-vvvv --force --timestamp --options=runtim
 CODE_SIGN_OPTIONS_QUIET:       str = '--force --timestamp --options=runtime'
 
 
-class CommandBase(ABC):
+class CommandBasic(ABC):
 
     def __init__(self, environment: BasicEnvironment):
 
