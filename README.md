@@ -8,9 +8,18 @@
 
 ## Rationale
 
-Utilities to help me sign Python applications built with py2app
+These utilities to help me sign Python applications built with py2app.  This project is a Python rewrite of the one I implemented using [Bash](https://www.gnu.org/software/bash/manual/bash.html) scripts.  See the [CodeSigningScripts](https://github.com/hasii2011/CodeSigningScripts) repository.  The source article for this code and the shell scripts is still [here](https://hsanchezii.wordpress.com/2021/10/06/code-signing-python-py2app-applications/).  The motivation to do this in Python was that supporting different Python versions necessitated implementing version specific scripts for signing ofthe Python libraries and applications.  I thought that was unsustainable.
+
+The goals for this project are:
+
+- Consistent CLI interface across Python versions 
+- Installable in a developer's virtual environment
+- Default the signing parameters to environment variables.  This allows for short CLI invocations.  However, still allow CLI parameter overrides
+- Use the built-in keychain to store the notarization tool application ID.  This avoid having to either key-in or recall from the bash history a long, long application ID.
 
 ## Dependencies
+
+This project uses [Click](https://click.palletsprojects.com/) for CLI handling
 
 
 ## Required Environment Variables
@@ -20,6 +29,7 @@ The above commands depend on the following environment variables.
 ```bash
 PROJECTS_BASE             -  The local directory where the python projects are based
 PROJECT                          -  The name of the project;  It should be a directory name
+IDENTITY                        - Your Apple Developer ID 
 ```
 
  An example, of a PROJECTS_BASE is:

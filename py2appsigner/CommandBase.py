@@ -13,7 +13,7 @@ from abc import ABC
 
 from click import secho
 
-from py2appsigner.Environment import Environment
+from py2appsigner.BasicEnvironment import BasicEnvironment
 
 BUILD_DIR:  str = '/dist/'
 ZIP_SUFFIX: str = 'zip'
@@ -31,32 +31,28 @@ CODE_SIGN_OPTIONS_QUIET:       str = '--force --timestamp --options=runtime'
 
 class CommandBase(ABC):
 
-    def __init__(self, environment: Environment):
+    def __init__(self, environment: BasicEnvironment):
 
-        self._environment: Environment = environment
+        self._basicEnvironment: BasicEnvironment = environment
 
-        self.logger: Logger = getLogger(__name__)
+        self.baseLogger: Logger = getLogger(__name__)
 
-        self._fullPath:        str = f'{self._environment.projectsBase}/{self._environment.projectDirectory}'
-        self._pythonVersion:   str = self._removeDecimalSeparator(self._environment.pythonVersion)
-        self._applicationName: str = f'{self._fullPath}{BUILD_DIR}{self._environment.applicationName}.app'
+        self._fullPath:        str = f'{self._basicEnvironment.projectsBase}/{self._basicEnvironment.projectDirectory}'
+        self._applicationName: str = f'{self._fullPath}{BUILD_DIR}{self._basicEnvironment.applicationName}.app'
 
     @abstractmethod
     def execute(self):
         pass
 
-    def _removeDecimalSeparator(self, pythonVersion: str):
-        return pythonVersion.replace('.', '')
-
     def _getToolOptions(self, verboseOptions: str, quietOptions: str) -> str:
-        if self._environment.verbose is True:
+        if self._basicEnvironment.verbose is True:
             return verboseOptions
         else:
             return quietOptions
 
     def _runCommand(self,  command: str):
 
-        if self._environment.verbose is True:
+        if self._basicEnvironment.verbose is True:
             secho(self._execute(command=command))
         else:
             subProcessRun([command], shell=True, capture_output=True, text=True, check=True)

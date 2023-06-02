@@ -5,18 +5,19 @@ from logging import getLogger
 from click import clear
 from click import secho
 
+from py2appsigner.BasicEnvironment import BasicEnvironment
+
 from py2appsigner.CommandBase import BUILD_DIR
 from py2appsigner.CommandBase import CommandBase
 from py2appsigner.CommandBase import DITTO_TOOL
 from py2appsigner.CommandBase import REMOVE_OPTIONS_QUIET
 from py2appsigner.CommandBase import REMOVE_OPTIONS_VERBOSE
 from py2appsigner.CommandBase import ZIP_SUFFIX
-from py2appsigner.Environment import Environment
 
 
 class ApplicationNotarize(CommandBase):
 
-    def __init__(self, environment: Environment, applicationPasswordName: str = 'NOTARY_TOOL_APP_ID'):
+    def __init__(self, environment: BasicEnvironment, applicationPasswordName: str = 'NOTARY_TOOL_APP_ID'):
         super().__init__(environment=environment)
 
         self._applicationPasswordName: str = applicationPasswordName
@@ -28,7 +29,7 @@ class ApplicationNotarize(CommandBase):
         #  assumes you added an entry APP_PASSWORD to your keychain
         #
         clear()
-        zipFile:       str = f'{self._fullPath}{BUILD_DIR}{self._environment.applicationName}.{ZIP_SUFFIX}'
+        zipFile:       str = f'{self._fullPath}{BUILD_DIR}{self._basicEnvironment.applicationName}.{ZIP_SUFFIX}'
 
         self._cleanupOldZipFile(zipFile=zipFile)
         self._createNewZipFile(zipFile=zipFile)

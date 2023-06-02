@@ -20,6 +20,7 @@ from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
 from py2appsigner.ApplicationStaple import ApplicationStaple
 from py2appsigner.ApplicationVerify import ApplicationVerify
+from py2appsigner.BasicEnvironment import BasicEnvironment
 
 from py2appsigner.Environment import Environment
 from py2appsigner.ZipSign import ZipSign
@@ -45,10 +46,10 @@ def setUpLogging():
 
 @group
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
-@option('--python-version',    '-p', required=True,  help='Identify the python version')
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
+@option('--python-version',    '-p', required=True,  help='Identify the python version')
 @option('--identity',          '-i', required=False, help='Code signing identity')
 @option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
 @pass_context
@@ -136,12 +137,7 @@ def appNotarize(application_name: str, projects_base: str = '', project_director
     Assumes the developer stored application specific ID with the name 'APP_PASSWORD'
 
     """
-    environment: Environment     = Environment(pythonVersion='',                    # Not Needed
-                                               applicationName=application_name,
-                                               projectsBase=projects_base,
-                                               projectDirectory=project_directory,
-                                               identity='',                         # Not needed
-                                               verbose=verbose)
+    environment: BasicEnvironment = BasicEnvironment(applicationName=application_name, projectsBase=projects_base, projectDirectory=project_directory, verbose=verbose)
 
     applicationNotarize: ApplicationNotarize = ApplicationNotarize(environment=environment)
     applicationNotarize.execute()
@@ -211,8 +207,8 @@ def notarizationInformation():
 
 
 if __name__ == '__main__':
-    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
+    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     # noinspection SpellCheckingInspection
-    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'appsign'])
+    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])
     # appNotarize(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
-    appStaple(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
+    # appStaple(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])

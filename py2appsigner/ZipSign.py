@@ -5,14 +5,17 @@ from logging import getLogger
 from os import sep as osSep
 from pathlib import Path
 
+from tqdm import tqdm
+
 from py2appsigner.CommandBase import CODE_SIGN_OPTIONS_QUIET
 from py2appsigner.CommandBase import CODE_SIGN_OPTIONS_VERBOSE
 from py2appsigner.CommandBase import CODE_SIGN_TOOL
-from py2appsigner.CommandBase import CommandBase
+
 from py2appsigner.CommandBase import COPY_OPTIONS_VERBOSE
 from py2appsigner.CommandBase import COPY_OPTIONS_QUIET
 from py2appsigner.CommandBase import REMOVE_OPTIONS_QUIET
 from py2appsigner.CommandBase import REMOVE_OPTIONS_VERBOSE
+from py2appsigner.CommandExtended import CommandExtended
 
 from py2appsigner.Environment import Environment
 
@@ -27,7 +30,7 @@ DITTO_CREATE_OPTIONS_VERBOSE:  str = '-c -k -v'
 DITTO_CREATE_OPTIONS_QUIET:    str = '-c -k'
 
 
-class ZipSign(CommandBase):
+class ZipSign(CommandExtended):
 
     def __init__(self, environment: Environment):
 
@@ -36,7 +39,7 @@ class ZipSign(CommandBase):
         self.logger: Logger = getLogger(__name__)
 
     def execute(self):
-        self.logger.debug(f'{self._environment.pythonVersion=} {self._environment.applicationName=}')
+        self.logger.debug(f'{self._extendedEnvironment.pythonVersion=} {self._extendedEnvironment.applicationName=}')
 
         # fullPath:        str = f'{self._environment.projectsBase}/{self._environment.projectDirectory}'
         # pythonVersion:   str = self._removeDecimalSeparator(self._environment.pythonVersion)
@@ -84,7 +87,7 @@ class ZipSign(CommandBase):
         self._runCommand(unZipIt)
 
     def _signLibs(self, unzipDir: str):
-        # noinspection SpellCheckingInspection
+        # noinspection SpellCheckingInspectionx
         """
         export  OPTIONS = "--force --verbose --timestamp --options=runtime "
         find "${PYTHON_UNZIP_DIR}/PIL/.dylibs" -iname '*.dylib' |
@@ -94,12 +97,12 @@ class ZipSign(CommandBase):
         """
         # noinspection SpellCheckingInspection
         p:        Path = Path(f'{unzipDir}/PIL/.dylibs')
-        identity: str  = self._environment.identity
+        identity: str  = self._extendedEnvironment.identity
         options:  str  = self._getToolOptions(verboseOptions=CODE_SIGN_OPTIONS_VERBOSE, quietOptions=CODE_SIGN_OPTIONS_QUIET)
-        for lib in p.iterdir():
-
-            signIt: str = f'{CODE_SIGN_TOOL} --sign "{identity}" {options} {lib}'
-            self._runCommand(signIt)
+        if self._extendedEnvironment.verbose is True:
+            self._zipSignVerbose(identity, options, p)
+        else:
+            self._zipSignProgressBar(identity, options, p)
 
     def _removeOldUnSignedZip(self, zipName: str):
         options:    str  = self._getToolOptions(verboseOptions=REMOVE_OPTIONS_VERBOSE, quietOptions=REMOVE_OPTIONS_QUIET)
@@ -125,6 +128,18 @@ class ZipSign(CommandBase):
 
         self._runCommand(moveItBack)
 
-    # def _echo(self, message: str):
-    #     if self._environment.verbose is True:
-    #         secho(message)
+    def _zipSignVerbose(self, identity: str, options: str, dynamicLibrariesPath: Path):
+
+        for lib in dynamicLibrariesPath.iterdir():
+            signIt: str = f'{CODE_SIGN_TOOL} --sign "{identity}" {options} {lib}'
+            self._runCommand(signIt)
+
+    def _zipSignProgressBar(self, identity: str, options: str, dynamicLibrariesPath: Path):
+
+        libs = dynamicLibrariesPath.iterdir()
+        pbar: tqdm = tqdm(dynamicLibrariesPath.iterdir(), unit=' Library ', bar_format='{l_bar}{bar}{r_bar}')
+        for lib in pbar:
+            path: Path = Path(lib)
+            pbar.set_description(f'Processing {path.name}', refresh=True)
+            signIt: str = f'{CODE_SIGN_TOOL} --sign "{identity}" {options} {lib}'
+            self._runCommand(signIt)

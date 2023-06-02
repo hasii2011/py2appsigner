@@ -7,14 +7,17 @@ from pathlib import Path
 
 from click import secho
 
+from tqdm import tqdm
+
 from py2appsigner.CommandBase import CODE_SIGN_OPTIONS_QUIET
 from py2appsigner.CommandBase import CODE_SIGN_OPTIONS_VERBOSE
 from py2appsigner.CommandBase import CODE_SIGN_TOOL
-from py2appsigner.CommandBase import CommandBase
 from py2appsigner.CommandBase import COPY_OPTIONS_VERBOSE
 from py2appsigner.CommandBase import COPY_OPTIONS_QUIET
 from py2appsigner.CommandBase import REMOVE_OPTIONS_QUIET
 from py2appsigner.CommandBase import REMOVE_OPTIONS_VERBOSE
+
+from py2appsigner.CommandExtended import CommandExtended
 
 from py2appsigner.Environment import Environment
 
@@ -40,7 +43,7 @@ SHARED_OBJECT_LIBRARY_WILDCARD:       str = '*.so'
 MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD: str = '*.dylib'
 
 
-class ApplicationSign(CommandBase):
+class ApplicationSign(CommandExtended):
 
     def __init__(self, environment: Environment, fixLib: bool):
 
@@ -94,16 +97,18 @@ class ApplicationSign(CommandBase):
         secho(f'Sign Libraries - {SHARED_OBJECT_LIBRARY_WILDCARD}')
         soLibs: List[Path] = sorted(p.rglob(f'{SHARED_OBJECT_LIBRARY_WILDCARD}'))
 
-        for lib in soLibs:
-            signSo: str = f'{self._codeSignCommand} {lib}'
-            self._runCommand(signSo)
+        if self._extendedEnvironment.verbose is True:
+            self._verboseSignSOLibraries(soLibs)
+        else:
+            self._progressBarSignSOLibraries(soLibs)
 
         secho(f'Sign Libraries - {MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD}')
         dyLibs: List[Path] = sorted(p.rglob(f'{MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD}'))
 
-        for lib in dyLibs:
-            signDyLibs: str = f'{self._codeSignCommand} {lib}'
-            self._runCommand(signDyLibs)
+        if self._extendedEnvironment.verbose is True:
+            self._verboseSignDynamicLibraries(dyLibs)
+        else:
+            self._progressBarSignDynamicLibraries(dyLibs)
 
     def _signFrameworks(self):
         """
@@ -126,7 +131,7 @@ class ApplicationSign(CommandBase):
 
     def _signApplication(self):
         # codesign --sign "${IDENTITY}" ${OPTIONS} "${FULL_APP_NAME}/Contents/MacOS/${APPLICATION_NAME}"
-        application:     str = f'{self._applicationName}/Contents/MacOS/{self._environment.applicationName}'
+        application:     str = f'{self._applicationName}/Contents/MacOS/{self._extendedEnvironment.applicationName}'
         signApplication: str = f'{self._codeSignCommand} {application}'
 
         self._runCommand(signApplication)
@@ -140,8 +145,34 @@ class ApplicationSign(CommandBase):
         Returns:  The code CLI to invoke with all options correctly set;
         """
         options:  str = self._getToolOptions(verboseOptions=CODE_SIGN_OPTIONS_VERBOSE, quietOptions=CODE_SIGN_OPTIONS_QUIET)
-        identity: str = self._environment.identity
+        identity: str = self._extendedEnvironment.identity
 
         codeSignCommand: str = f'{CODE_SIGN_TOOL} --sign "{identity}" {options}'
 
         return codeSignCommand
+
+    def _verboseSignSOLibraries(self, soLibs: List[Path]):
+        for lib in soLibs:
+            signSo: str = f'{self._codeSignCommand} {lib}'
+            self._runCommand(signSo)
+
+    def _progressBarSignSOLibraries(self, soLibs: List[Path]):
+        pbar: tqdm = tqdm(soLibs, unit=' Library ')
+        for lib in pbar:
+            path: Path = Path(lib)
+            pbar.set_description(f'Processing {path.name}')
+            signSo: str = f'{self._codeSignCommand} {lib}'
+            self._runCommand(signSo)
+
+    def _verboseSignDynamicLibraries(self, dyLibs: List[Path]):
+        for lib in dyLibs:
+            signDyLibs: str = f'{self._codeSignCommand} {lib}'
+            self._runCommand(signDyLibs)
+
+    def _progressBarSignDynamicLibraries(self, dyLibs: List[Path]):
+        pbar: tqdm = tqdm(dyLibs, unit=' Library ')
+        for dylib in pbar:
+            path: Path = Path(dylib)
+            pbar.set_description(path.name)
+            signDyLibs: str = f'{self._codeSignCommand} {dylib}'
+            self._runCommand(signDyLibs)
