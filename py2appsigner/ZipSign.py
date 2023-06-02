@@ -136,8 +136,8 @@ class ZipSign(CommandExtended):
 
     def _zipSignProgressBar(self, identity: str, options: str, dynamicLibrariesPath: Path):
 
-        libs = dynamicLibrariesPath.iterdir()
-        pbar: tqdm = tqdm(dynamicLibrariesPath.iterdir(), unit=' Library ', bar_format='{l_bar}{bar}{r_bar}')
+        libs = list(dynamicLibrariesPath.iterdir())
+        pbar: tqdm = tqdm(libs, unit=' Library ', bar_format='{l_bar}{bar}{r_bar}')
         for lib in pbar:
             path: Path = Path(lib)
             pbar.set_description(f'Processing {path.name}', refresh=True)
