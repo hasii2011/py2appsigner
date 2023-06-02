@@ -26,3 +26,4 @@ jobs:
             name: run tests
             command: | 
               python3 -m tests.TestCommands
+              runtests

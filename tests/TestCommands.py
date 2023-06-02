@@ -31,7 +31,7 @@ def testZipSignHelp():
     actualOutputList: List[str] = result.output.split('\n')
     assert len(actualOutputList) == 32, 'Help output mismatch'
 
-    assert actualOutputList[21] == '  -b, --projects-base TEXT      Projects base, overrides environment variable', 'Help line does not match'
+    assert actualOutputList[20] == '  -b, --projects-base TEXT      Projects base, overrides environment variable', 'Help line does not match'
 
 
 if __name__ == "__main__":
