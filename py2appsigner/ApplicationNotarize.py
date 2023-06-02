@@ -5,7 +5,7 @@ from logging import getLogger
 from click import clear
 from click import secho
 
-from py2appsigner.BasicEnvironment import BasicEnvironment
+from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 from py2appsigner.CommandBasic import BUILD_DIR
 from py2appsigner.CommandBasic import CommandBasic

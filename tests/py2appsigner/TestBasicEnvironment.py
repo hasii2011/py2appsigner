@@ -11,7 +11,7 @@ from unittest import main as unitTestMain
 
 from click import ClickException
 
-from py2appsigner.BasicEnvironment import BasicEnvironment
+from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 from tests.TestBase import TestBase
 
 # import the class you want to test here

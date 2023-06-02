@@ -23,6 +23,7 @@ setup(
     url="https://github.com/py2appsigner",
     packages=[
         'py2appsigner',
+        'py2appsigner.environment',
         'py2appsigner.resources',
     ],
     package_data={

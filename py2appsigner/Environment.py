@@ -8,7 +8,7 @@ from os import environ as osEnvironment
 
 from click import ClickException
 
-from py2appsigner.BasicEnvironment import BasicEnvironment
+from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 
 @dataclass

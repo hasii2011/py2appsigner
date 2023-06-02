@@ -20,7 +20,7 @@ from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
 from py2appsigner.ApplicationStaple import ApplicationStaple
 from py2appsigner.ApplicationVerify import ApplicationVerify
-from py2appsigner.BasicEnvironment import BasicEnvironment
+from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 from py2appsigner.Environment import Environment
 from py2appsigner.ZipSign import ZipSign

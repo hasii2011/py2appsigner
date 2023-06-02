@@ -13,7 +13,7 @@ from abc import ABC
 
 from click import secho
 
-from py2appsigner.BasicEnvironment import BasicEnvironment
+from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 BUILD_DIR:  str = '/dist/'
 ZIP_SUFFIX: str = 'zip'
