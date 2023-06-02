@@ -1,9 +1,4 @@
 
-from typing import cast
-
-from logging import Logger
-from logging import getLogger
-
 from os import environ as osEnviron
 
 from unittest import TestSuite
@@ -14,25 +9,19 @@ from click import ClickException
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 from tests.TestBase import TestBase
 
-# import the class you want to test here
-# from org.pyut.template import template
-
 
 class TestBasicEnvironment(TestBase):
     """
     """
-    clsLogger: Logger = cast(Logger, None)
-
     @classmethod
     def setUpClass(cls):
-        TestBase.setUpLogging()
-        TestBasicEnvironment.clsLogger = getLogger(__name__)
+        super().setUpClass()
 
     def setUp(self):
-        self.logger: Logger = TestBasicEnvironment.clsLogger
+        super().setUp()
 
     def tearDown(self):
-        pass
+        super().tearDown()
 
     def testNoProjectBase(self):
         try:
