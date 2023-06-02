@@ -22,7 +22,7 @@ from py2appsigner.ApplicationStaple import ApplicationStaple
 from py2appsigner.ApplicationVerify import ApplicationVerify
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
-from py2appsigner.Environment import Environment
+from py2appsigner.environment.Environment import Environment
 from py2appsigner.ZipSign import ZipSign
 
 RESOURCES_PACKAGE_NAME:       str = 'py2appsigner.resources'

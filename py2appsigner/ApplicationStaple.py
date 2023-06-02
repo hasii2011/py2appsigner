@@ -5,7 +5,7 @@ from logging import getLogger
 from click import secho
 
 from py2appsigner.CommandBasic import CommandBasic
-from py2appsigner.Environment import Environment
+from py2appsigner.environment.Environment import Environment
 
 
 class ApplicationStaple(CommandBasic):

@@ -5,7 +5,7 @@ from logging import getLogger
 from abc import abstractmethod
 
 from py2appsigner.CommandBasic import CommandBasic
-from py2appsigner.Environment import Environment
+from py2appsigner.environment.Environment import Environment
 
 
 class CommandExtended(CommandBasic):

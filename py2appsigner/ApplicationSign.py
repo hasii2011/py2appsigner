@@ -19,7 +19,7 @@ from py2appsigner.CommandBasic import REMOVE_OPTIONS_VERBOSE
 
 from py2appsigner.CommandExtended import CommandExtended
 
-from py2appsigner.Environment import Environment
+from py2appsigner.environment.Environment import Environment
 
 
 # noinspection SpellCheckingInspection

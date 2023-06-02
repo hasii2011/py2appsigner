@@ -17,7 +17,7 @@ from py2appsigner.CommandBasic import REMOVE_OPTIONS_QUIET
 from py2appsigner.CommandBasic import REMOVE_OPTIONS_VERBOSE
 from py2appsigner.CommandExtended import CommandExtended
 
-from py2appsigner.Environment import Environment
+from py2appsigner.environment.Environment import Environment
 
 ZIP_DIRECTORY_SNIPPET: str = '/Contents/Resources/lib'
 TMP_DIR_PATH:          str = '/tmp'
