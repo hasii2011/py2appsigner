@@ -8,7 +8,12 @@
 
 ## Rationale
 
-These utilities to help me sign Python applications built with py2app.  This project is a Python rewrite of the one I implemented using [Bash](https://www.gnu.org/software/bash/manual/bash.html) scripts.  See the [CodeSigningScripts](https://github.com/hasii2011/CodeSigningScripts) repository.  The source article for this code and the shell scripts is still [here](https://hsanchezii.wordpress.com/2021/10/06/code-signing-python-py2app-applications/).  The motivation to do this in Python was that supporting different Python versions necessitated implementing version specific scripts for signing ofthe Python libraries and applications.  I thought that was unsustainable.
+These utilities help me sign Python applications built with py2app.  This project is a Python rewrite of the one I implemented 
+using [Bash](https://www.gnu.org/software/bash/manual/bash.html) scripts.  See
+the [CodeSigningScripts](https://github.com/hasii2011/CodeSigningScripts) repository.  The source article for this code and 
+the shell scripts is still [here](https://hsanchezii.wordpress.com/2021/10/06/code-signing-python-py2app-applications/).  The 
+motivation to do this in Python was that supporting different Python versions necessitated implementing version specific scripts 
+when signing the Python libraries and applications.  I thought that was unsustainable.
 
 The goals for this project are:
 
@@ -28,8 +33,8 @@ The above commands depend on the following environment variables.
 
 ```bash
 PROJECTS_BASE             -  The local directory where the python projects are based
-PROJECT                          -  The name of the project;  It should be a directory name
-IDENTITY                        - Your Apple Developer ID 
+PROJECT                   -  The name of the project;  It should be a directory name
+IDENTITY                  - Your Apple Developer ID 
 ```
 
  An example, of a PROJECTS_BASE is:
@@ -40,7 +45,8 @@ export PROJECTS_BASE="${HOME}/PycharmProjects"
 
 This should be set in your shell startup script.  For example `.bash_profile`.
 
-The PROJECT environment variable should be set on a project by project basis.  I recommend you use [direnv](https://direnv.net) to manage these.  An example of a .envrc follows:
+The PROJECT environment variable should be set on a project by project basis.  I recommend you use [direnv](https://direnv.net) to manage 
+these.  An example of a .envrc follows:
 
 ```bash
 export PROJECT=pyutmodel
@@ -75,7 +81,8 @@ While I do not advocate for all the issues listed there I do not like that a com
 
 I continue to use GitHub because it offers the services I need for free.  But, I continue to monitor their terms of service.
 
-Any use of this project's code by GitHub Copilot, past or present, is done without my permission.  I do not consent to GitHub's use of this project's code in Copilot.
+Any use of this project's code by GitHub Copilot, past or present, is done without my permission.  I do not consent to GitHub's use of 
+this project's code in Copilot.
 
 A repository owner may opt out of Copilot by changing Settings --> GitHub Copilot.
 
