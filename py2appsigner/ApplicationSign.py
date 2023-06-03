@@ -19,6 +19,8 @@ from py2appsigner.CommandBasic import REMOVE_OPTIONS_VERBOSE
 
 from py2appsigner.CommandExtended import CommandExtended
 
+from py2appsigner.Common import PROGRESS_BAR_UNITS
+
 from py2appsigner.environment.Environment import Environment
 
 
@@ -157,7 +159,7 @@ class ApplicationSign(CommandExtended):
             self._runCommand(signSo)
 
     def _progressBarSignSOLibraries(self, soLibs: List[Path]):
-        pbar: tqdm = tqdm(soLibs, unit=' Library ')
+        pbar: tqdm = tqdm(soLibs, unit=PROGRESS_BAR_UNITS)
         for lib in pbar:
             path: Path = Path(lib)
             pbar.set_description(f'Processing {path.name}')
@@ -170,7 +172,7 @@ class ApplicationSign(CommandExtended):
             self._runCommand(signDyLibs)
 
     def _progressBarSignDynamicLibraries(self, dyLibs: List[Path]):
-        pbar: tqdm = tqdm(dyLibs, unit=' Library ')
+        pbar: tqdm = tqdm(dyLibs, unit=PROGRESS_BAR_UNITS)
         for dylib in pbar:
             path: Path = Path(dylib)
             pbar.set_description(path.name)

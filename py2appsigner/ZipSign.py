@@ -17,6 +17,8 @@ from py2appsigner.CommandBasic import REMOVE_OPTIONS_QUIET
 from py2appsigner.CommandBasic import REMOVE_OPTIONS_VERBOSE
 from py2appsigner.CommandExtended import CommandExtended
 
+from py2appsigner.Common import PROGRESS_BAR_UNITS
+
 from py2appsigner.environment.Environment import Environment
 
 ZIP_DIRECTORY_SNIPPET: str = '/Contents/Resources/lib'
@@ -137,7 +139,7 @@ class ZipSign(CommandExtended):
     def _zipSignProgressBar(self, identity: str, options: str, dynamicLibrariesPath: Path):
 
         libs = list(dynamicLibrariesPath.iterdir())
-        pbar: tqdm = tqdm(libs, unit=' Library ', bar_format='{l_bar}{bar}{r_bar}')
+        pbar: tqdm = tqdm(libs, unit=PROGRESS_BAR_UNITS, bar_format='{l_bar}{bar}{r_bar}')
         for lib in pbar:
             path: Path = Path(lib)
             pbar.set_description(f'Processing {path.name}', refresh=True)

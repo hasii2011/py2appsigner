@@ -5,6 +5,7 @@ from logging import getLogger
 from click import clear
 from click import secho
 
+from py2appsigner.Common import DEFAULT_NOTARY_TOOL_KEYCHAIN_PROFILE_NAME
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 from py2appsigner.CommandBasic import BUILD_DIR
@@ -17,10 +18,10 @@ from py2appsigner.CommandBasic import ZIP_SUFFIX
 
 class ApplicationNotarize(CommandBasic):
 
-    def __init__(self, environment: BasicEnvironment, applicationPasswordName: str = 'NOTARY_TOOL_APP_ID'):
+    def __init__(self, environment: BasicEnvironment, keyChainProfileName: str = DEFAULT_NOTARY_TOOL_KEYCHAIN_PROFILE_NAME):
         super().__init__(environment=environment)
 
-        self._applicationPasswordName: str = applicationPasswordName
+        self._keyChainProfileName: str = keyChainProfileName
         self.logger: Logger = getLogger(__name__)
 
     def execute(self):
@@ -61,6 +62,6 @@ class ApplicationNotarize(CommandBasic):
         secho('Call Apple for notary service', reverse=True)
 
         # noinspection SpellCheckingInspection
-        notarizeIt: str = f'xcrun notarytool submit {zipFile} --keychain-profile "{self._applicationPasswordName}" --wait'
+        notarizeIt: str = f'xcrun notarytool submit {zipFile} --keychain-profile "{self._keyChainProfileName}" --wait'
 
         self._runCommand(notarizeIt)

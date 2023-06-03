@@ -17,8 +17,6 @@ class Environment(BasicEnvironment):
     """
     IDENTITY:          str = 'IDENTITY'
 
-    DEFAULT_NOTARY_TOOL_APP_ID_NAME: str = 'NOTARY_TOOL_APP_ID'
-
     pythonVersion:    str = ''
     identity:         str  = ''
 
