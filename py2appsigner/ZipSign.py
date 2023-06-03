@@ -99,7 +99,7 @@ class ZipSign(CommandExtended):
         p:        Path = Path(f'{unzipDir}/PIL/.dylibs')
         identity: str  = self._extendedEnvironment.identity
         options:  str  = self._getToolOptions(verboseOptions=CODE_SIGN_OPTIONS_VERBOSE, quietOptions=CODE_SIGN_OPTIONS_QUIET)
-        if self._extendedEnvironment.verbose is True:
+        if self.verbose is True:
             self._zipSignVerbose(identity, options, p)
         else:
             self._zipSignProgressBar(identity, options, p)

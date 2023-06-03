@@ -1,3 +1,4 @@
+from abc import ABCMeta
 from logging import Logger
 from logging import getLogger
 
@@ -9,10 +10,10 @@ from subprocess import check_call as subProcessCheckCall
 from subprocess import STDOUT
 
 from abc import abstractmethod
-from abc import ABC
 
 from click import secho
 
+from py2appsigner.BaseCommand import BaseCommand
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 BUILD_DIR:  str = '/dist/'
@@ -29,10 +30,20 @@ CODE_SIGN_OPTIONS_VERBOSE:     str = '-vvvv --force --timestamp --options=runtim
 CODE_SIGN_OPTIONS_QUIET:       str = '--force --timestamp --options=runtime'
 
 
-class CommandBasic(ABC):
+class MetaBaseCommand(ABCMeta, type(BaseCommand)):      # type: ignore
+    """
+    I have know idea why this works:
+    https://stackoverflow.com/questions/66591752/metaclass-conflict-when-trying-to-create-a-python-abstract-class-that-also-subcl
+    """
+    pass
+
+
+class CommandBasic(BaseCommand):
+    __metaclass = MetaBaseCommand
 
     def __init__(self, environment: BasicEnvironment):
 
+        super().__init__(verbose=environment.verbose)
         self._basicEnvironment: BasicEnvironment = environment
 
         self.baseLogger: Logger = getLogger(__name__)
@@ -44,18 +55,18 @@ class CommandBasic(ABC):
     def execute(self):
         pass
 
-    def _getToolOptions(self, verboseOptions: str, quietOptions: str) -> str:
-        if self._basicEnvironment.verbose is True:
-            return verboseOptions
-        else:
-            return quietOptions
-
-    def _runCommand(self,  command: str):
-
-        if self._basicEnvironment.verbose is True:
-            secho(self._execute(command=command))
-        else:
-            subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
-
-    def _execute(self, command):
-        subProcessCheckCall(command, shell=True, stdout=stdout, stderr=STDOUT)
+    # def _getToolOptions(self, verboseOptions: str, quietOptions: str) -> str:
+    #     if self._basicEnvironment.verbose is True:
+    #         return verboseOptions
+    #     else:
+    #         return quietOptions
+    #
+    # def _runCommand(self,  command: str):
+    #
+    #     if self._basicEnvironment.verbose is True:
+    #         secho(self._execute(command=command))
+    #     else:
+    #         subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
+    #
+    # def _execute(self, command):
+    #     subProcessCheckCall(command, shell=True, stdout=stdout, stderr=STDOUT)

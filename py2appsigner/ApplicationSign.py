@@ -97,7 +97,7 @@ class ApplicationSign(CommandExtended):
         secho(f'Sign Libraries - {SHARED_OBJECT_LIBRARY_WILDCARD}')
         soLibs: List[Path] = sorted(p.rglob(f'{SHARED_OBJECT_LIBRARY_WILDCARD}'))
 
-        if self._extendedEnvironment.verbose is True:
+        if self.verbose is True:
             self._verboseSignSOLibraries(soLibs)
         else:
             self._progressBarSignSOLibraries(soLibs)
@@ -105,7 +105,7 @@ class ApplicationSign(CommandExtended):
         secho(f'Sign Libraries - {MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD}')
         dyLibs: List[Path] = sorted(p.rglob(f'{MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD}'))
 
-        if self._extendedEnvironment.verbose is True:
+        if self.verbose is True:
             self._verboseSignDynamicLibraries(dyLibs)
         else:
             self._progressBarSignDynamicLibraries(dyLibs)
