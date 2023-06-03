@@ -39,8 +39,7 @@ setup(
             "appNotarize=py2appsigner.Commands:appNotarize",
             "appStaple=py2appsigner.Commands:appStaple",
             "appVerify=py2appsigner.Commands:appVerify",
-            "notarizationHistory=py2appsigner.Commands:notarizationHistory",
-            "notarizationInformation=py2appsigner.Commands:notarizationInformation"
+            "notary=py2appsigner.Commands:notary",
         ]
     },
 )

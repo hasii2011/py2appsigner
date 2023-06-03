@@ -24,9 +24,13 @@ from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 from py2appsigner.environment.Environment import Environment
 from py2appsigner.ZipSign import ZipSign
+from py2appsigner.environment.NotaryEnvironment import NotaryEnvironment
+
 
 RESOURCES_PACKAGE_NAME:       str = 'py2appsigner.resources'
 JSON_LOGGING_CONFIG_FILENAME: str = "loggingConfiguration.json"
+
+VERBOSE_OPTION_HELP: str = 'Include this option to instruct command to echo the underlying CLI output'
 
 
 def setUpLogging():
@@ -51,7 +55,7 @@ def setUpLogging():
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
 @option('--python-version',    '-p', required=True,  help='Identify the python version')
 @option('--identity',          '-i', required=False, help='Code signing identity')
-@option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
+@option('--verbose',           '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
 @pass_context
 def py2appSign(ctx, python_version: str, application_name: str, projects_base: str = '', project_directory: str = '', identity: str = '', verbose: bool = False):
     """
@@ -121,7 +125,7 @@ def appSign(environment: Environment, fix_lib: bool = False):
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
-@option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
+@option('--verbose',           '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
 def appNotarize(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
     """
     Specify the application name created by py2app
@@ -148,7 +152,7 @@ def appNotarize(application_name: str, projects_base: str = '', project_director
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
-@option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
+@option('--verbose',           '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
 def appStaple(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
 
     environment: Environment     = Environment(pythonVersion='',                    # Not Needed
@@ -167,7 +171,7 @@ def appStaple(application_name: str, projects_base: str = '', project_directory:
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
 @option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
-@option('--verbose',           '-v', required=False, is_flag=True, help='Set option to echo commands')
+@option('--verbose',           '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
 def appVerify(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
 
     environment: Environment     = Environment(pythonVersion='',                    # Not Needed
@@ -181,29 +185,36 @@ def appVerify(application_name: str, projects_base: str = '', project_directory:
     applicationVerify.execute()
 
 
-@command()
+@group
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
 @option('--keychain-profile', '-p', required=False, help='Keychain profile name storing Notary Tool Application Id')
-@option('--verbose',          '-v', required=False, is_flag=True, help='Set option to echo commands')
-def notarizationHistory(keychain_profile: str, verbose: bool = False):
+@option('--verbose',          '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
+@pass_context
+def notary(ctx, keychain_profile: str, verbose: bool = False):
+
+    notaryEnvironment: NotaryEnvironment = NotaryEnvironment(keyChainProfile=keychain_profile, verbose=verbose)
+    ctx.obj = notaryEnvironment
+
+
+@notary.command()
+@pass_obj
+def history(notaryEnvironment: NotaryEnvironment):
     """
     clear
     xcrun notarytool history --keychain-profile "NOTARY_TOOL_APP_ID"  >> notaryhistory.log
     """
-    pass
+    print(f'{notaryEnvironment=}')
 
 
-@command()
-@version_option(version=f'{version}', message='%(prog)s version %(version)s')
-@option('--keychain-profile', '-p', required=False, help='Keychain profile name storing Notary Tool Application Id')
-@option('--verbose',          '-v', required=False, is_flag=True, help='Set option to echo commands')
-def notarizationInformation():
+@notary.command()
+@pass_obj
+def information(notaryEnvironment: NotaryEnvironment):
     """
     clear
     xcrun notarytool log $notarizationId --keychain-profile "NOTARY_TOOL_APP_ID" "notary-${notarizationId}.log"
 
     """
-    pass
+    print(f'{notaryEnvironment=}')
 
 
 if __name__ == '__main__':

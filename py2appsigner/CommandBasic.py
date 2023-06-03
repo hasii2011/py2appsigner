@@ -54,19 +54,3 @@ class CommandBasic(BaseCommand):
     @abstractmethod
     def execute(self):
         pass
-
-    # def _getToolOptions(self, verboseOptions: str, quietOptions: str) -> str:
-    #     if self._basicEnvironment.verbose is True:
-    #         return verboseOptions
-    #     else:
-    #         return quietOptions
-    #
-    # def _runCommand(self,  command: str):
-    #
-    #     if self._basicEnvironment.verbose is True:
-    #         secho(self._execute(command=command))
-    #     else:
-    #         subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
-    #
-    # def _execute(self, command):
-    #     subProcessCheckCall(command, shell=True, stdout=stdout, stderr=STDOUT)
