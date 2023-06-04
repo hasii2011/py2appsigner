@@ -12,7 +12,7 @@ from click import secho
 
 
 class BaseCommand:
-    def __init__(self, verbose: bool):
+    def __init__(self, verbose: bool = True):
 
         self._verbose: bool   = verbose
         self.logger:   Logger = getLogger(__name__)

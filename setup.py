@@ -39,7 +39,7 @@ setup(
             "appNotarize=py2appsigner.Commands:appNotarize",
             "appStaple=py2appsigner.Commands:appStaple",
             "appVerify=py2appsigner.Commands:appVerify",
-            "notary=py2appsigner.Commands:notary",
+            "notaryTool=py2appsigner.Commands:notaryTool",
         ]
     },
 )
