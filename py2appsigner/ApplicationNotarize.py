@@ -21,8 +21,8 @@ class ApplicationNotarize(CommandBasic):
     def __init__(self, environment: BasicEnvironment, keyChainProfileName: str = DEFAULT_NOTARY_TOOL_KEYCHAIN_PROFILE_NAME):
         super().__init__(environment=environment)
 
-        self._keyChainProfileName: str = keyChainProfileName
-        self.logger: Logger = getLogger(__name__)
+        self._keyChainProfileName: str    = keyChainProfileName
+        self.logger:               Logger = getLogger(__name__)
 
     def execute(self):
         #

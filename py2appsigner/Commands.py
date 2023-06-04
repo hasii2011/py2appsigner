@@ -20,6 +20,7 @@ from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
 from py2appsigner.ApplicationStaple import ApplicationStaple
 from py2appsigner.ApplicationVerify import ApplicationVerify
+from py2appsigner.Notary import Notary
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 from py2appsigner.environment.Environment import Environment
@@ -192,7 +193,10 @@ def appVerify(application_name: str, projects_base: str = '', project_directory:
 @pass_context
 def notary(ctx, keychain_profile: str, verbose: bool = False):
 
-    notaryEnvironment: NotaryEnvironment = NotaryEnvironment(keyChainProfile=keychain_profile, verbose=verbose)
+    notaryEnvironment: NotaryEnvironment = NotaryEnvironment()
+    if keychain_profile is not None:
+        notaryEnvironment.keyChainProfile = keychain_profile
+    notaryEnvironment.verbose = verbose
     ctx.obj = notaryEnvironment
 
 
@@ -200,26 +204,25 @@ def notary(ctx, keychain_profile: str, verbose: bool = False):
 @pass_obj
 def history(notaryEnvironment: NotaryEnvironment):
     """
-    clear
-    xcrun notarytool history --keychain-profile "NOTARY_TOOL_APP_ID"  >> notaryhistory.log
     """
-    print(f'{notaryEnvironment=}')
+    notary: Notary = Notary(notaryEnvironment=notaryEnvironment)
+    notary.history()
 
 
 @notary.command()
+@option('--submission-id', '-i', required=True, help='Submission ID returned from a previous invocation of `appNotarize`')
 @pass_obj
-def information(notaryEnvironment: NotaryEnvironment):
+def information(notaryEnvironment: NotaryEnvironment, submission_id: str):
     """
-    clear
-    xcrun notarytool log $notarizationId --keychain-profile "NOTARY_TOOL_APP_ID" "notary-${notarizationId}.log"
-
     """
-    print(f'{notaryEnvironment=}')
+    notary: Notary = Notary(notaryEnvironment=notaryEnvironment)
+    notary.information(submissionId=submission_id)
 
 
 if __name__ == '__main__':
-    py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
+    # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     # noinspection SpellCheckingInspection
     # py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])
     # appNotarize(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
     # appStaple(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
+    notary(['information', '-i', 'xx'])
