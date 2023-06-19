@@ -48,7 +48,7 @@ class Notary(BaseCommand):
         """
         xcrun notarytool log $notarizationId --keychain-profile "NOTARY_TOOL_APP_ID" "notary-${notarizationId}.log"
         """
-        outputFile: str = f'notary-${submissionId}.log'
+        outputFile: str = f'notary-{submissionId}.log'
 
         # noinspection SpellCheckingInspection
         logRequest: str = (
