@@ -44,6 +44,8 @@ CLEAN_UP_CRUD: List[str] = [
 SHARED_OBJECT_LIBRARY_WILDCARD:       str = '*.so'
 MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD: str = '*.dylib'
 
+PRE_FRAMEWORK_PATH: str = '/Contents/Frameworks/Python.framework'
+
 
 class ApplicationSign(CommandExtended):
 
@@ -120,7 +122,10 @@ class ApplicationSign(CommandExtended):
         # codesign --sign "${IDENTITY}" ${OPTIONS} "${FULL_APP_NAME}/Contents/Frameworks/Python.framework/Versions/3.10/Python"
         #
         secho('Sign Framework')
-        framework:     str = f'{self._applicationName}/Contents/Frameworks/Python.framework/Versions/3.10/Python'
+
+        framework:     str = (
+            f'{self._applicationName}/{PRE_FRAMEWORK_PATH}/{self._pythonVersion}/Python'
+        )
         signFramework: str = f'{self._codeSignCommand} {framework}'
         self._runCommand(signFramework)
 
