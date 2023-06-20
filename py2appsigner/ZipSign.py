@@ -48,8 +48,8 @@ class ZipSign(CommandExtended):
         # applicationName: str = f'{fullPath}{BUILD_DIR}{self._environment.applicationName}.app'
 
         originalZipDir: str = f'{self._applicationName}{ZIP_DIRECTORY_SNIPPET}'
-        unzipDir:       str = f'{TMP_DIR_PATH}/python{self._pythonVersion}'
-        zipName:        str = f'python{self._pythonVersion}.zip'
+        unzipDir:       str = f'{TMP_DIR_PATH}/python{self._flatPythonVersion}'
+        zipName:        str = f'python{self._flatPythonVersion}.zip'
 
         self._cleanupTemporaryDirectory(unzipDir=unzipDir, zipName=zipName)
         self._getUnsignedZipCopy(originalZipDir=originalZipDir, zipName=zipName)

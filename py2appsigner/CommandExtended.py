@@ -15,7 +15,8 @@ class CommandExtended(CommandBasic):
         self.logger: Logger = getLogger(__name__)
 
         self._extendedEnvironment: Environment = environment
-        self._pythonVersion:       str         = self._removeDecimalSeparator(self._extendedEnvironment.pythonVersion)
+        self._pythonVersion:       str         = self._extendedEnvironment.pythonVersion
+        self._flatPythonVersion:   str         = self._removeDecimalSeparator(self._extendedEnvironment.pythonVersion)
 
     @abstractmethod
     def execute(self):
