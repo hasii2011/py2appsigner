@@ -44,7 +44,7 @@ CLEAN_UP_CRUD: List[str] = [
 SHARED_OBJECT_LIBRARY_WILDCARD:       str = '*.so'
 MACH_OBJECT_DYNAMIC_LIBRARY_WILDCARD: str = '*.dylib'
 
-PRE_FRAMEWORK_PATH: str = '/Contents/Frameworks/Python.framework'
+PRE_FRAMEWORK_PATH: str = '/Contents/Frameworks/Python.framework/Versions'
 
 
 class ApplicationSign(CommandExtended):
@@ -62,8 +62,8 @@ class ApplicationSign(CommandExtended):
 
         self._fixLibrary()
         self._cleanupCrud()
-        self._signLibraries()
         self._signFrameworks()
+        self._signLibraries()
         self._signPythonApp()
         self._signApplication()
 
