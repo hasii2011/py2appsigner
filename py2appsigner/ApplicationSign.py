@@ -49,18 +49,20 @@ PRE_FRAMEWORK_PATH: str = '/Contents/Frameworks/Python.framework/Versions'
 
 class ApplicationSign(CommandExtended):
 
-    def __init__(self, environment: Environment, fixLib: bool):
+    def __init__(self, environment: Environment, fixLib: bool, fixSymLink: bool):
 
         super().__init__(environment=environment)
         self.logger: Logger = getLogger(__name__)
 
-        self._fixLib: bool = fixLib
+        self._fixLib:     bool = fixLib
+        self._fixSymLink: bool = fixSymLink
 
         self._codeSignCommand: str = self._constructCodeSignCommand()
 
     def execute(self):
 
         self._fixLibrary()
+        self._fixSymbolicLink()
         self._cleanupCrud()
         self._signFrameworks()
         self._signLibraries()
@@ -74,6 +76,14 @@ class ApplicationSign(CommandExtended):
             options: str = self._getToolOptions(verboseOptions=COPY_OPTIONS_VERBOSE, quietOptions=COPY_OPTIONS_QUIET)
             overwrite: str = f'cp {options} {GOOD_LIB} {directoryToOverWrite}'
             self._runCommand(overwrite)
+
+    def _fixSymbolicLink(self):
+        if self._fixSymLink is True:
+            linkToRemove: str = f'{self._applicationName}/Contents/Resources/lib/python{self._pythonVersion}/site.pyo '
+            options:      str = self._getToolOptions(verboseOptions=REMOVE_OPTIONS_VERBOSE,
+                                                     quietOptions=REMOVE_OPTIONS_QUIET)
+            remove:       str  = f'rm {options} {linkToRemove}'
+            self._runCommand(remove)
 
     def _cleanupCrud(self):
         """

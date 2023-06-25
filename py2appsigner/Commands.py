@@ -98,10 +98,10 @@ def zipSign(environment: Environment):
 
 
 @py2appSign.command()
-@option('--fix-lib', '-f', required=False, is_flag=True, help='Fix broken library ')
+@option('--fix-lib',      '-l', required=False, is_flag=True, help='Fix broken library')
+@option('--fix-sym-link', '-s', required=False, is_flag=True, help='Fix invalid symbolic link')
 @pass_obj
-def appSign(environment: Environment, fix_lib: bool = False):
-    # noinspection SpellCheckingInspection
+def appSign(environment: Environment, fix_lib: bool = False, fix_sym_link: bool = False):
     """
     fix-lib gets the following dynamic library from Homebrew;  And copies it into the
     Python virtual environment;  Works only on Apple Silicon OS X
@@ -116,8 +116,16 @@ def appSign(environment: Environment, fix_lib: bool = False):
     Apple Silicon
 
     /opt/homebrew/opt/xz/lib/liblzma.5.dylib
+
+    -fix-sym-link remove the following symbolic link from the application binary before signing
+
+     <application>.app/Contents/Resources/lib/python<python version>/site.pyo
+
+     Leaving this file in place with a signed and notarized application causes it to
+     fail the appVerify phase and renders the binary unusable
+
     """
-    applicationSign: ApplicationSign = ApplicationSign(environment=environment, fixLib=fix_lib)
+    applicationSign: ApplicationSign = ApplicationSign(environment=environment, fixLib=fix_lib, fixSymLink=fix_sym_link)
     applicationSign.execute()
 
 
@@ -232,4 +240,4 @@ if __name__ == '__main__':
     notaryTool(['information', '-i', '5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad'])
     notaryTool(['--keychain-profile', 'NOTARY_TOOL_APP_ID', 'history'])
     """
-    py2appSign(['--python-version', '3.11', '-d', 'pyut', '--application-name', 'pyut', '--verbose', 'appsign'])
+    py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '-s'])
