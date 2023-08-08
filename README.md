@@ -70,14 +70,12 @@ source pyenv-3.10.6/bin/activate
 
 ### Staple the application
 
-`appStaple   -d pyut -a pyut --verbose`
-
+`appStaple   -d pyut -a Pyut --verbose`
 
 
 ### Verify application signing
 
 `appVerify -d pyut -a Pyut`
-
 
 
 ### Utility Scripts
