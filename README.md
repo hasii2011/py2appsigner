@@ -68,10 +68,17 @@ source pyenv-3.10.6/bin/activate
 `appNotarize -d pyut -a pyut --verbose`
 
 
-
 ### Staple the application
 
 `appStaple   -d pyut -a pyut --verbose`
+
+
+
+### Verify application signing
+
+`appVerify -d pyut -a Pyut`
+
+
 
 ### Utility Scripts
 
