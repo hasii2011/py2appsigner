@@ -53,24 +53,24 @@ source pyenv-3.10.6/bin/activate
 
 ### Sign the internal zip file
 
-`py2appSign --python-version 3.10 --project-directory pyut --application-name pyut  --verbose zipsign`
+`py2appSign --python-version 3.10 --project-directory pyut --application-name Pyut  --verbose zipsign`
 
 
 
 ### Sign the application
 
-`py2appSign -p 3.10 -d pyut -a pyut  --verbose appsign`
+`py2appSign -p 3.10 -d pyut -a Pyut  --verbose appsign`
 
 
 
 ### Notarize the application
 
-`appNotarize -d pyut -a pyut --verbose`
+`appNotarize -d pyut -a Pyut --verbose`
 
 
 ### Staple the application
 
-`appStaple   -d pyut -a Pyut --verbose`
+`appStaple -d pyut -a Pyut --verbose`
 
 
 ### Verify application signing
@@ -86,19 +86,19 @@ source pyenv-3.10.6/bin/activate
 
 ##### Specify a profile name
 
-notaryTool -p NOTARY_TOOL_APP_ID history
+`notaryTool -p NOTARY_TOOL_APP_ID history`
 
 Stores the history in the file `notaryHistory.log`.
 
 #### Notary Details
 
-notaryTool information -i 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad
+`notaryTool information -i 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
 
 ##### Specify a profile name
 
-notaryTool -p NOTARY_TOOL_APP_ID information -i 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad
+`notaryTool -p NOTARY_TOOL_APP_ID information -i 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
 
-Stores the output in the file notary-{submission id}.log
+Stores the output in the file `notary-{submission id}.log`
 
 
 
@@ -126,10 +126,4 @@ While I do not advocate for all the issues listed there I do not like that a com
 
 I continue to use GitHub because it offers the services I need for free.  But, I continue to monitor their terms of service.
 
-Any use of this project's code by GitHub Copilot, past or present, is done without my permission.  I do not consent to GitHub's use of 
-this project's code in Copilot.
-
-A repository owner may opt out of Copilot by changing Settings --> GitHub Copilot.
-
-I have done so.
-
+Any use of this project's code by GitHub Copilot, past or present, is done without my permission.  I do not consent to GitHub's use of this project's code in Copilot.
