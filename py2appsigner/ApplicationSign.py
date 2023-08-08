@@ -73,9 +73,10 @@ class ApplicationSign(CommandExtended):
 
         if self._fixLib is True:
             directoryToOverWrite: str = f'{self._applicationName}/Contents/Frameworks'
-            options: str = self._getToolOptions(verboseOptions=COPY_OPTIONS_VERBOSE, quietOptions=COPY_OPTIONS_QUIET)
-            overwrite: str = f'cp {options} {GOOD_LIB} {directoryToOverWrite}'
+            options:              str = self._getToolOptions(verboseOptions=COPY_OPTIONS_VERBOSE, quietOptions=COPY_OPTIONS_QUIET)
+            overwrite:            str = f'cp {options} {GOOD_LIB} {directoryToOverWrite}'
             self._runCommand(overwrite)
+            secho(f'Fixed library: {overwrite}')
 
     def _fixSymbolicLink(self):
         if self._fixSymLink is True:
@@ -140,7 +141,7 @@ class ApplicationSign(CommandExtended):
         self._runCommand(signFramework)
 
     def _signPythonApp(self):
-        # codesign --sign "${IDENTITY}" ${OPTIONS} "${FULL_APP_NAME}/Contents/MacOS/python"
+        # codesign --sign "${IDENTITY}" ${OPTIONS} "${FULL_APP_NAME}/Contents/macOS/python"
         pythonApp:  str = f'{self._applicationName}/Contents/MacOS/python'
         signPython: str = f'{self._codeSignCommand} {pythonApp}'
 

@@ -11,6 +11,7 @@ from click import command
 from click import group
 from click import pass_context
 from click import pass_obj
+from click import secho
 from click import version_option
 from click import option
 
@@ -31,7 +32,14 @@ from py2appsigner.environment.NotaryEnvironment import NotaryEnvironment
 RESOURCES_PACKAGE_NAME:       str = 'py2appsigner.resources'
 JSON_LOGGING_CONFIG_FILENAME: str = "loggingConfiguration.json"
 
-VERBOSE_OPTION_HELP: str = 'Include this option to instruct command to echo the underlying CLI output'
+VERBOSE_OPTION_HELP: str = 'Include this option to instruct the command to echo the underlying CLI output'
+
+"""
+Put in type ignore because of strange error on that appeared on 8.1.4
+
+buildlackey/Commands.py:80: error: Argument 1 has incompatible type "Callable[[], Any]"; expected <nothing>  [arg-type]
+    @command
+"""
 
 
 def setUpLogging():
@@ -240,4 +248,4 @@ if __name__ == '__main__':
     notaryTool(['information', '-i', '5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad'])
     notaryTool(['--keychain-profile', 'NOTARY_TOOL_APP_ID', 'history'])
     """
-    py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '-s'])
+    py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '-l'])
