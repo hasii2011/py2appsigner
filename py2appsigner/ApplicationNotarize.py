@@ -35,18 +35,14 @@ class ApplicationNotarize(CommandBasic):
         self._cleanupOldZipFile(zipFile=zipFile)
         self._createNewZipFile(zipFile=zipFile)
         self._notarizeIt(zipFile=zipFile)
+        self._removeZipFile(zipFile=zipFile, message='Success! Let`s be hygienic')
 
     def _cleanupOldZipFile(self, zipFile: str):
         # echo "${txReverse}Clean up in case of restart on failure${txReset}"
         # rm - rfv "${ZIP_PATH}"
         # echo    "${txReverse}Clean up in case of restart on failure${txReset}"
 
-        secho('Clean up in case of restart on failure', reverse=True)
-
-        removeOptions: str = self._getToolOptions(verboseOptions=REMOVE_OPTIONS_VERBOSE, quietOptions=REMOVE_OPTIONS_QUIET)
-        removeIt:      str = f'rm {removeOptions} {zipFile}'
-
-        self._runCommand(removeIt)
+        self._removeZipFile(zipFile=zipFile, message='Clean up in case of restart on failure')
 
     def _createNewZipFile(self, zipFile: str):
         # echo "${txReverse}Create a ZIP archive suitable for notarization${txReset}"
@@ -57,6 +53,14 @@ class ApplicationNotarize(CommandBasic):
         zipIt: str = f'{DITTO_TOOL} -c -k --keepParent {self._applicationName} {zipFile}'
 
         self._runCommand(zipIt)
+
+    def _removeZipFile(self, zipFile: str, message: str):
+        secho(message=message, reverse=True)
+
+        removeOptions: str = self._getToolOptions(verboseOptions=REMOVE_OPTIONS_VERBOSE, quietOptions=REMOVE_OPTIONS_QUIET)
+        removeIt:      str = f'rm {removeOptions} {zipFile}'
+
+        self._runCommand(removeIt)
 
     def _notarizeIt(self, zipFile: str):
         secho('Call Apple for notary service', reverse=True)
