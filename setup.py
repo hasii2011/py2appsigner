@@ -31,7 +31,7 @@ setup(
     },
 
     install_requires=[
-        'click~=8.1.3', 'tqdm==4.65.0'
+        'click~=8.1.3', 'tqdm==4.65.0',
     ],
     entry_points={
         "console_scripts": [
@@ -40,6 +40,7 @@ setup(
             "appStaple=py2appsigner.Commands:appStaple",
             "appVerify=py2appsigner.Commands:appVerify",
             "notaryTool=py2appsigner.Commands:notaryTool",
+            "py2appsigner=py2appsigner.Commands:py2appsigner",
         ]
     },
 )

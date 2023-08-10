@@ -12,6 +12,7 @@ from click import group
 from click import pass_context
 from click import pass_obj
 from click import secho
+from click import clear
 from click import version_option
 from click import option
 
@@ -125,7 +126,7 @@ def appSign(environment: Environment, fix_lib: bool = False, fix_sym_link: bool 
 
     /opt/homebrew/opt/xz/lib/liblzma.5.dylib
 
-    -fix-sym-link remove the following symbolic link from the application binary before signing
+    -fix-sym-link removes the following symbolic link from the application binary before signing
 
      <application>.app/Contents/Resources/lib/python<python version>/site.pyo
 
@@ -238,6 +239,24 @@ def information(notaryEnvironment: NotaryEnvironment, submission_id: str):
     notary.information(submissionId=submission_id)
 
 
+@command()
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+def py2appsigner():
+    clear()
+    secho('Example Commands:')
+    secho('     py2appSign -p 3.11 -d pyut -a Pyut  --verbose zipsign')
+    secho('     py2appSign -p 3.11 -d pyut -a Pyut  --verbose appsign')
+    secho('')
+    secho('     appNotarize -d pyut -a Pyut --verbose')
+    secho('     appStaple   -d pyut -a Pyut --verbose')
+    secho('     appVerify   -d pyut -a Pyut')
+    secho('')
+    secho('     notaryTool history')
+    secho('     notaryTool -p NOTARY_TOOL_APP_ID history')
+    secho('     notaryTool information -i <submission id>')
+    secho('     notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>')
+
+
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
     """
@@ -247,5 +266,6 @@ if __name__ == '__main__':
     appStaple(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
     notaryTool(['information', '-i', '5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad'])
     notaryTool(['--keychain-profile', 'NOTARY_TOOL_APP_ID', 'history'])
-    """
     py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '-l'])
+    """
+    py2appsigner()

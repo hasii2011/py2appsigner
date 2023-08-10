@@ -53,14 +53,12 @@ source pyenv-3.10.6/bin/activate
 
 ### Sign the internal zip file
 
-`py2appSign --python-version 3.10 --project-directory pyut --application-name Pyut  --verbose zipsign`
-
+`py2appSign --python-version 3.11 --project-directory pyut --application-name Pyut  --verbose zipsign`
 
 
 ### Sign the application
 
-`py2appSign -p 3.10 -d pyut -a Pyut  --verbose appsign`
-
+`py2appSign -p 3.11 -d pyut -a Pyut  --verbose appsign`
 
 
 ### Notarize the application
@@ -92,11 +90,13 @@ Stores the history in the file `notaryHistory.log`.
 
 #### Notary Details
 
-`notaryTool information -i 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
+`notaryTool information -i <submission id)
+e.g. 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
 
 ##### Specify a profile name
 
-`notaryTool -p NOTARY_TOOL_APP_ID information -i 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
+`notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>
+e.g.  5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
 
 Stores the output in the file `notary-{submission id}.log`
 
