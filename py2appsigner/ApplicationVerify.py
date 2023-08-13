@@ -2,8 +2,13 @@
 from logging import Logger
 from logging import getLogger
 
+from click import secho
+
 from py2appsigner.CommandBasic import CommandBasic
 from py2appsigner.environment.Environment import Environment
+
+# noinspection SpellCheckingInspection
+SECURITY_ASSESSMENT_COMMAND: str = '/usr/sbin/spctl'
 
 
 class ApplicationVerify(CommandBasic):
@@ -16,6 +21,7 @@ class ApplicationVerify(CommandBasic):
 
     def execute(self):
 
-        verify: str = f'spctl -vvvv --assess --type exec {self._applicationName}'
+        secho('Verify signature', reverse=True)
+        verify: str = f'{SECURITY_ASSESSMENT_COMMAND} -vvvv --assess --type exec {self._applicationName}'
 
         self._runCommand(verify)

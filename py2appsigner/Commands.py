@@ -266,6 +266,6 @@ if __name__ == '__main__':
     appStaple(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
     notaryTool(['information', '-i', '5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad'])
     notaryTool(['--keychain-profile', 'NOTARY_TOOL_APP_ID', 'history'])
-    py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '-l'])
+    appVerify(['-a', 'Pyut', '-d', 'pyut', '--verbose'])
     """
-    py2appsigner()
+    py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '--fix-sym-link'])

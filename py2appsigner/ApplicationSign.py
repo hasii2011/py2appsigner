@@ -81,9 +81,8 @@ class ApplicationSign(CommandExtended):
     def _fixSymbolicLink(self):
         if self._fixSymLink is True:
             linkToRemove: str = f'{self._applicationName}/Contents/Resources/lib/python{self._pythonVersion}/site.pyo '
-            options:      str = self._getToolOptions(verboseOptions=REMOVE_OPTIONS_VERBOSE,
-                                                     quietOptions=REMOVE_OPTIONS_QUIET)
-            remove:       str  = f'rm {options} {linkToRemove}'
+            remove:       str = f'rm {REMOVE_OPTIONS_VERBOSE} {linkToRemove}'
+            secho(remove)
             self._runCommand(remove)
 
     def _cleanupCrud(self):
