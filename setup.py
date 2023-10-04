@@ -1,7 +1,10 @@
+
 import pathlib
+
 from setuptools import setup
 
 from py2appsigner import __version__ as version
+
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
 
@@ -31,7 +34,7 @@ setup(
     },
 
     install_requires=[
-        'click~=8.1.3', 'tqdm==4.65.0',
+        'click~=8.1.7', 'tqdm==4.66.1',
     ],
     entry_points={
         "console_scripts": [
