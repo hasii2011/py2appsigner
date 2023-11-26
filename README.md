@@ -53,7 +53,9 @@ source pyenv-3.10.6/bin/activate
 
 ### Sign the internal zip file
 
-```py2appSign --python-version 3.11 --project-directory pyut --application-name Pyut  --verbose zipsign```
+```bash
+py2appSign --python-version 3.11 --project-directory pyut --application-name Pyut  --verbose zipsign
+```
 
 
 ### Sign the application
