@@ -60,45 +60,62 @@ py2appSign --python-version 3.11 --project-directory pyut --application-name Pyu
 
 ### Sign the application
 
-`py2appSign -p 3.11 -d pyut -a Pyut  --verbose appsign`
+```bash
+py2appSign -p 3.11 -d pyut -a Pyut  --verbose appsign
+```
 
 
 ### Notarize the application
 
-`appNotarize -d pyut -a Pyut --verbose`
+```bash
+appNotarize -d pyut -a Pyut --verbose
+```
 
 
 ### Staple the application
 
-`appStaple -d pyut -a Pyut --verbose`
+```bash
+appStaple -d pyut -a Pyut --verbose
+```
 
 
 ### Verify application signing
 
-`appVerify -d pyut -a Pyut`
+```bash
+appVerify -d pyut -a Pyut
+```
 
 
 ### Utility Scripts
 
 #### Notarization History
 
-`notaryTool history`
+```bash
+notaryTool history
+```
 
 ##### Specify a profile name
 
-`notaryTool -p NOTARY_TOOL_APP_ID history`
+```bash
+notaryTool -p NOTARY_TOOL_APP_ID history
+```
 
 Stores the history in the file `notaryHistory.log`.
 
 #### Notary Details
 
-`notaryTool information -i <submission id)
-e.g. 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
+```bash
+notaryTool information -i <submission id)
+```
+`e.g. 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad
+`
 
 ##### Specify a profile name
 
-`notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>
-e.g.  5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
+```bash
+notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>
+```
+`e.g.  5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
 
 Stores the output in the file `notary-{submission id}.log`
 
