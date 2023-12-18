@@ -1,6 +1,6 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/hasii2011/py2appsigner/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/hasii2011/py2appsigner/tree/master)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
-
+[![PyPI version](https://badge.fury.io/py/py2appsigner.svg)](https://badge.fury.io/py/py2appsigner)
 
 ## Rationale
 
@@ -18,6 +18,10 @@ The goals for this project are:
 - Default the signing parameters to environment variables.  This allows for short CLI invocations.  However, still allow CLI parameter overrides
 - Use the built-in keychain to store the notarization tool application ID.  This avoid having to either key-in or recall from the bash history a long, long application ID.
 
+Installation
+```bash
+pip install py2appsigner
+```
 ## Dependencies
 
 This project uses [Click](https://click.palletsprojects.com/) for CLI handling
