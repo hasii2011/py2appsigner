@@ -4,7 +4,7 @@
 
 ## Rationale
 
-These utilities help me sign Python applications built with py2app.  This project is a Python rewrite of the one I implemented 
+These utilities help me sign Python applications built with [py2app](https://github.com/ronaldoussoren/py2app).  This project is a Python rewrite of the one I implemented 
 using [Bash](https://www.gnu.org/software/bash/manual/bash.html) scripts.  See
 the [CodeSigningScripts](https://github.com/hasii2011/CodeSigningScripts) repository.  The source article for this code and 
 the shell scripts is still [here](https://hsanchezii.wordpress.com/2021/10/06/code-signing-python-py2app-applications/).  The 
