@@ -34,7 +34,7 @@ setup(
     },
 
     install_requires=[
-        'click~=8.1.7', 'tqdm==4.66.1',
+        'click>=8.1.7', 'tqdm>=4.66.5',
     ],
     entry_points={
         "console_scripts": [

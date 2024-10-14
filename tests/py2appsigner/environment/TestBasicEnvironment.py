@@ -24,6 +24,7 @@ class TestBasicEnvironment(TestBase):
         super().tearDown()
 
     def testNoProjectBase(self):
+        saveEnvironment = osEnviron[BasicEnvironment.ENV_PROJECTS_BASE]
         try:
             del osEnviron[BasicEnvironment.ENV_PROJECTS_BASE]
         except KeyError:
@@ -31,13 +32,19 @@ class TestBasicEnvironment(TestBase):
 
         self.assertRaises(ClickException, lambda: self._classConstruction())
 
+        osEnviron[BasicEnvironment.ENV_PROJECTS_BASE] = saveEnvironment
+
     def testNoProject(self):
+        saveEnvironment = osEnviron[BasicEnvironment.ENV_PROJECT]
+
         try:
             del osEnviron[BasicEnvironment.ENV_PROJECT]
         except KeyError:
             pass    # May or may not exist;  don't care
 
         self.assertRaises(ClickException, lambda: self._classConstruction())
+
+        osEnviron[BasicEnvironment.ENV_PROJECT] = saveEnvironment
 
     # noinspection PyUnusedLocal
     def _classConstruction(self):
