@@ -1,0 +1,40 @@
+[build-system]
+requires = ['setuptools', 'wheel']
+build-backend = "setuptools.build_meta"
+
+[project]
+name='py2appsigner'
+dynamic = ["version"]
+description = 'Scripts to Code Sign py2app applications'
+readme = "README.md"
+license = {text = 'GNU AFFERO GENERAL PUBLIC LICENSE'}
+authors = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
+maintainers = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
+keywords = ['code signing', 'py2app', 'python',]
+
+dependencies = [
+  'tqdm>=4.66.5',
+  'click~=8.1.7',
+]
+
+[project.urls]
+Repository = 'https://github.com/hasii2011/py2appsigner'
+
+
+[tool.setuptools.packages.find]
+where = ['src']
+
+[tool.setuptools.package-data]
+'py2appsigner.resources' = ['loggingConfiguration.json']
+
+[tool.setuptools.dynamic]
+version = {attr = 'py2appsigner.__version__'}
+
+[project.scripts]
+
+py2appSign = "py2appsigner.Commands:py2appSign"
+appNotarize = "py2appsigner.Commands:appNotarize"
+appStaple = "py2appsigner.Commands:appStaple"
+appVerify = "py2appsigner.Commands:appVerify"
+notaryTool = "py2appsigner.Commands:notaryTool"
+py2appsigner = "py2appsigner.Commands:py2appsigner"
