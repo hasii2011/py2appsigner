@@ -3,9 +3,12 @@ from logging import Logger
 from logging import getLogger
 
 from os import sep as osSep
+
 from pathlib import Path
 
 from tqdm import tqdm
+
+from click import secho
 
 from py2appsigner.CommandBasic import CODE_SIGN_OPTIONS_QUIET
 from py2appsigner.CommandBasic import CODE_SIGN_OPTIONS_VERBOSE
@@ -89,7 +92,7 @@ class ZipSign(CommandExtended):
         self._runCommand(unZipIt)
 
     def _signLibs(self, unzipDir: str):
-        # noinspection SpellCheckingInspectionx
+        # noinspection SpellCheckingInspection
         """
         export  OPTIONS = "--force --verbose --timestamp --options=runtime "
         find "${PYTHON_UNZIP_DIR}/PIL/.dylibs" -iname '*.dylib' |
@@ -99,12 +102,15 @@ class ZipSign(CommandExtended):
         """
         # noinspection SpellCheckingInspection
         p:        Path = Path(f'{unzipDir}/PIL/.dylibs')
-        identity: str  = self._extendedEnvironment.identity
-        options:  str  = self._getToolOptions(verboseOptions=CODE_SIGN_OPTIONS_VERBOSE, quietOptions=CODE_SIGN_OPTIONS_QUIET)
-        if self.verbose is True:
-            self._zipSignVerbose(identity, options, p)
+        if p.exists() is False:
+            secho(f'No dynamic libraries to sign at: {p}')
         else:
-            self._zipSignProgressBar(identity, options, p)
+            identity: str  = self._extendedEnvironment.identity
+            options:  str  = self._getToolOptions(verboseOptions=CODE_SIGN_OPTIONS_VERBOSE, quietOptions=CODE_SIGN_OPTIONS_QUIET)
+            if self.verbose is True:
+                self._zipSignVerbose(identity, options, p)
+            else:
+                self._zipSignProgressBar(identity, options, p)
 
     def _removeOldUnSignedZip(self, zipName: str):
         options:    str  = self._getToolOptions(verboseOptions=REMOVE_OPTIONS_VERBOSE, quietOptions=REMOVE_OPTIONS_QUIET)
