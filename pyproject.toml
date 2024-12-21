@@ -13,8 +13,8 @@ maintainers = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@g
 keywords = ['code signing', 'py2app', 'python',]
 
 dependencies = [
-  'tqdm>=4.66.6',
-  'click~=8.1.7',
+  'tqdm>=4.67.1',
+  'click~=8.1.8',
 ]
 
 [project.urls]
