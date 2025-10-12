@@ -1,12 +1,2 @@
-.idea/
-__pycache__/
-.DS_Store
-.mypy_cache/
-/html/
-build/
-dist/
 py2appsigner.egg-info
-/pyenv-3.11.5/
-/pyenv-3.13.0/
-.envrc
-.python-version
+/pyenv-3.13.2/

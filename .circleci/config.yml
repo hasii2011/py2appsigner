@@ -20,9 +20,13 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
+      - run:
+          name: Install dependencies from pyproject.toml
+          command: |
+            pip install .
+            pip install .[test]
       - run:
             name: run tests
             command: | 
+              pip install buildlackey
               unittests

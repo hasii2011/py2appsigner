@@ -262,10 +262,14 @@ if __name__ == '__main__':
     """
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])
+    py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '--fix-sym-link'])
+
     appNotarize(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
     appStaple(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
     notaryTool(['information', '-i', '5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad'])
     notaryTool(['--keychain-profile', 'NOTARY_TOOL_APP_ID', 'history'])
     appVerify(['-a', 'Pyut', '-d', 'pyut', '--verbose'])
+    appNotarize(['-d', 'renderrob', '-a', 'renderrob', '--verbose'])
     """
-    py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '--fix-sym-link'])
+    # noinspection SpellCheckingInspection
+    py2appSign(['-v', '-p', '3.11', '-d', 'renderrob', '-a', 'renderrob', 'appsign'])

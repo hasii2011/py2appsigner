@@ -3,18 +3,33 @@ requires = ['setuptools', 'wheel']
 build-backend = "setuptools.build_meta"
 
 [project]
-name='py2appsigner'
-dynamic = ["version"]
+name        = 'py2appsigner'
+dynamic     = ["version"]
 description = 'Scripts to Code Sign py2app applications'
-readme = "README.md"
-license = {text = 'GNU AFFERO GENERAL PUBLIC LICENSE'}
-authors = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
+readme      = "README.md"
+authors     = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
 maintainers = [{name = 'Humberto A. Sanchez II', email = 'Humbert.A.Sanchez.II@gmail.com'}]
-keywords = ['code signing', 'py2app', 'python',]
+keywords    = ['code signing', 'py2app', 'python',]
+license     = 'AGPL-1.0-or-later'
 
 dependencies = [
   'tqdm>=4.67.1',
-  'click~=8.1.8',
+  'click>=8.3.0',
+]
+
+[project.optional-dependencies]
+test = [
+    'mypy==1.18.2',
+    'mypy-extensions==1.1.0',
+    'html-testRunner==1.2.1',
+    'codeallybasic==1.30.0'
+]
+
+deploy = [
+    'wheel==0.45.1',
+    'setuptools==80.9.0',
+    'twine==6.2.0',
+    'build==1.2.2.post1',
 ]
 
 [project.urls]
