@@ -1,4 +1,6 @@
 
+from typing import List
+
 from logging import Logger
 from logging import getLogger
 
@@ -54,10 +56,10 @@ class ZipSign(CommandExtended):
         unzipDir:       str = f'{TMP_DIR_PATH}/python{self._flatPythonVersion}'
         zipName:        str = f'python{self._flatPythonVersion}.zip'
 
-        self._cleanupTemporaryDirectory(unzipDir=unzipDir, zipName=zipName)
+        self._cleanupTemporaryDirectory(unzipDir=unzipDir, zipName=zipName,)
         self._getUnsignedZipCopy(originalZipDir=originalZipDir, zipName=zipName)
         self._unzipCopy(unzipDir=unzipDir, zipName=zipName)
-        self._signLibs(unzipDir=unzipDir)
+        self._signLibs(unzipDir=unzipDir, pythonVersion=self._flatPythonVersion)
         self._removeOldUnSignedZip(zipName=zipName)
         self._recreateSignedZip(unzipDir=unzipDir, zipName=zipName)
         self._moveSignedZipBack(originalZipDir=originalZipDir, zipName=zipName)
@@ -91,9 +93,11 @@ class ZipSign(CommandExtended):
 
         self._runCommand(unZipIt)
 
-    def _signLibs(self, unzipDir: str):
+    def _signLibs(self, unzipDir: str, pythonVersion: str):
         # noinspection SpellCheckingInspection
         """
+        TODO:  If more libraries are found figure out a better way to sign them
+
         export  OPTIONS = "--force --verbose --timestamp --options=runtime "
         find "${PYTHON_UNZIP_DIR}/PIL/.dylibs" -iname '*.dylib' |
 
@@ -101,10 +105,20 @@ class ZipSign(CommandExtended):
             unzipDir:
         """
         # noinspection SpellCheckingInspection
-        p:        Path = Path(f'{unzipDir}/PIL/.dylibs')
-        if p.exists() is False:
-            secho(f'No dynamic libraries to sign at: {p}')
+        pilPath:    Path = Path(f'{unzipDir}/PIL/.dylibs')
+        googlePath: Path = Path(f'{unzipDir}/python{pythonVersion}/google/_upb')
+
+        pathsToSign: List[Path] = []
+        if pilPath.exists() is False:
+            secho(f'No dynamic libraries to sign at: {pilPath}')
         else:
+            pathsToSign.append(pilPath)
+        if googlePath.exists() is False:
+            secho(f'No shared object library to sign at: {googlePath}')
+        else:
+            pathsToSign.append(googlePath)
+
+        for p in pathsToSign:
             identity: str  = self._extendedEnvironment.identity
             options:  str  = self._getToolOptions(verboseOptions=CODE_SIGN_OPTIONS_VERBOSE, quietOptions=CODE_SIGN_OPTIONS_QUIET)
             if self.verbose is True:

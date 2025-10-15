@@ -262,6 +262,7 @@ if __name__ == '__main__':
     """
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])
+    py2appSign(['-v', '-p', '3.12', '-d', 'pyut', '-a', 'Pyut', 'zipsign'])
     py2appSign(['-p', '3.11', '-d', 'pyut', '-a', 'pyut', '--verbose', 'appsign', '--fix-sym-link'])
 
     appNotarize(['-d', 'pyut', '--application-name', 'pyut', '--verbose'])
@@ -272,4 +273,4 @@ if __name__ == '__main__':
     appNotarize(['-d', 'renderrob', '-a', 'renderrob', '--verbose'])
     """
     # noinspection SpellCheckingInspection
-    py2appSign(['-v', '-p', '3.11', '-d', 'renderrob', '-a', 'renderrob', 'appsign'])
+    py2appSign(['-v', '-p', '3.11', '-d', 'renderrob', '-a', 'renderrob', 'zipsign'])
