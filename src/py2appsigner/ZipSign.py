@@ -106,16 +106,18 @@ class ZipSign(CommandExtended):
         """
         # noinspection SpellCheckingInspection
         pilPath:    Path = Path(f'{unzipDir}/PIL/.dylibs')
-        googlePath: Path = Path(f'{unzipDir}/python{pythonVersion}/google/_upb')
+        googlePath: Path = Path(f'{unzipDir}/google/_upb')
 
         pathsToSign: List[Path] = []
         if pilPath.exists() is False:
             secho(f'No dynamic libraries to sign at: {pilPath}')
         else:
+            secho(f'Signing: {pilPath}')
             pathsToSign.append(pilPath)
         if googlePath.exists() is False:
             secho(f'No shared object library to sign at: {googlePath}')
         else:
+            secho(f'Signing: {googlePath}')
             pathsToSign.append(googlePath)
 
         for p in pathsToSign:
