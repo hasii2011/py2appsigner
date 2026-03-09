@@ -5,7 +5,8 @@ import logging.config
 from json import load as jsonLoad
 
 from importlib.resources import files
-from importlib.abc import Traversable
+from importlib.resources.abc import Traversable
+
 
 from click import command
 from click import group
@@ -99,10 +100,13 @@ def py2appSign(ctx, python_version: str, application_name: str, projects_base: s
 
 
 @py2appSign.command()
+@option('--delete-part-files', '-d', required=False, is_flag=True, help='Remove opaque .part files')
 @pass_obj
-def zipSign(environment: Environment):
-
-    zipsign: ZipSign = ZipSign(environment=environment)
+def zipSign(environment: Environment, delete_part_files: bool = False):
+    """
+    Signs the internal python zipfile;  May optionally remove some bad files in test/zipimport_data
+    """
+    zipsign: ZipSign = ZipSign(environment=environment, deletePartFiles=delete_part_files)
     zipsign.execute()
 
 
@@ -113,7 +117,7 @@ def zipSign(environment: Environment):
 def appSign(environment: Environment, fix_lib: bool = False, fix_sym_link: bool = False):
     """
     fix-lib gets the following dynamic library from Homebrew;  And copies it into the
-    Python virtual environment;  Works only on Apple Silicon OS X
+    application;  Works only on Apple Silicon OS X
     and with Homebrew installed
 
     See: https://stackoverflow.com/questions/62095338/py2app-fails-macos-signing-on-liblzma-5-dylib
@@ -126,7 +130,7 @@ def appSign(environment: Environment, fix_lib: bool = False, fix_sym_link: bool 
 
     /opt/homebrew/opt/xz/lib/liblzma.5.dylib
 
-    -fix-sym-link removes the following symbolic link from the application binary before signing
+    --fix-sym-link removes the following symbolic link from the application binary before signing
 
      <application>.app/Contents/Resources/lib/python<python version>/site.pyo
 
@@ -272,5 +276,7 @@ if __name__ == '__main__':
     appVerify(['-a', 'Pyut', '-d', 'pyut', '--verbose'])
     appNotarize(['-d', 'renderrob', '-a', 'renderrob', '--verbose'])
     """
-    # noinspection SpellCheckingInspection
-    py2appSign(['-v', '-p', '3.11', '-d', 'renderrob', '-a', 'renderrob', 'zipsign'])
+
+    py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'zipsign', '--delete-part-files'])
+
+    # py2appSign(['-p', '3.13', '-a', 'umldiagrammer', '-d', 'umldiagrammer', 'zipsign', '--help'])

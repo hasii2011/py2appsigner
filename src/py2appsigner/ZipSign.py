@@ -28,6 +28,8 @@ from py2appsigner.environment.Environment import Environment
 
 ZIP_DIRECTORY_SNIPPET: str = '/Contents/Resources/lib'
 TMP_DIR_PATH:          str = '/tmp'
+BAD_PART_FILES_DIR:    str = 'test/zipimport_data'
+PART_SUFFIX_GLOB:      str = '*.part'
 
 DITTO_TOOL:                str = '/usr/bin/ditto'
 
@@ -39,18 +41,20 @@ DITTO_CREATE_OPTIONS_QUIET:    str = '-c -k'
 
 class ZipSign(CommandExtended):
 
-    def __init__(self, environment: Environment):
+    def __init__(self, environment: Environment, deletePartFiles: bool = False):
 
         super().__init__(environment=environment)
 
         self.logger: Logger = getLogger(__name__)
+
+        self._deletePartFiles: bool = deletePartFiles
 
     def execute(self):
         self.logger.debug(f'{self._extendedEnvironment.pythonVersion=} {self._extendedEnvironment.applicationName=}')
 
         # fullPath:        str = f'{self._environment.projectsBase}/{self._environment.projectDirectory}'
         # pythonVersion:   str = self._removeDecimalSeparator(self._environment.pythonVersion)
-        # applicationName: str = f'{fullPath}{BUILD_DIR}{self._environment.applicationName}.app'
+        # applicationName: str = f"{fullPath}{BUILD_DIR}{self._environment.applicationName}.app"
 
         originalZipDir: str = f'{self._applicationName}{ZIP_DIRECTORY_SNIPPET}'
         unzipDir:       str = f'{TMP_DIR_PATH}/python{self._flatPythonVersion}'
@@ -59,7 +63,9 @@ class ZipSign(CommandExtended):
         self._cleanupTemporaryDirectory(unzipDir=unzipDir, zipName=zipName,)
         self._getUnsignedZipCopy(originalZipDir=originalZipDir, zipName=zipName)
         self._unzipCopy(unzipDir=unzipDir, zipName=zipName)
-        self._signLibs(unzipDir=unzipDir, pythonVersion=self._flatPythonVersion)
+        if self._deletePartFiles is True:
+            self._expungePartFiles(unzipDir=unzipDir)
+        self._signLibs(unzipDir=unzipDir)
         self._removeOldUnSignedZip(zipName=zipName)
         self._recreateSignedZip(unzipDir=unzipDir, zipName=zipName)
         self._moveSignedZipBack(originalZipDir=originalZipDir, zipName=zipName)
@@ -93,7 +99,26 @@ class ZipSign(CommandExtended):
 
         self._runCommand(unZipIt)
 
-    def _signLibs(self, unzipDir: str, pythonVersion: str):
+    def _expungePartFiles(self, unzipDir: str):
+        """
+        Removes those evil .part files and the parent directory
+
+        Args:
+            unzipDir:   Top of the unzip directory
+        """
+        evilPartPath: Path = Path(unzipDir) / BAD_PART_FILES_DIR
+        if evilPartPath.exists() is True:
+            partFiles = sorted(evilPartPath.glob(PART_SUFFIX_GLOB))
+
+            for partFile in partFiles:
+                partFile.unlink()
+                secho(f'Eradicated: {partFile}')
+            evilPartPath.rmdir()
+            secho(f'Extirpated directory: {evilPartPath}')
+        else:
+            secho('No evil part files exist.  Thank the Lord.')
+
+    def _signLibs(self, unzipDir: str):
         # noinspection SpellCheckingInspection
         """
         TODO:  If more libraries are found figure out a better way to sign them
