@@ -14,7 +14,6 @@ from py2appsigner.CommandBasic import CODE_SIGN_OPTIONS_VERBOSE
 from py2appsigner.CommandBasic import CODE_SIGN_TOOL
 from py2appsigner.CommandBasic import COPY_OPTIONS_VERBOSE
 from py2appsigner.CommandBasic import COPY_OPTIONS_QUIET
-from py2appsigner.CommandBasic import REMOVE_OPTIONS_QUIET
 from py2appsigner.CommandBasic import REMOVE_OPTIONS_VERBOSE
 
 from py2appsigner.CommandExtended import CommandExtended
@@ -36,9 +35,9 @@ from py2appsigner.environment.Environment import Environment
 GOOD_LIB: str = '/opt/homebrew/opt/xz/lib/liblzma.5.dylib'
 
 CLEAN_UP_CRUD: List[str] = [
-    'Contents/Resources/lib/python3.10/todoist/.DS_Store',
-    'Contents/Resources/lib/python3.10/numpy/f2py/tests/src/assumed_shape/.f2py_f2cmap',
-    'Contents/Resources/lib/python3.10/site.pyo'
+    'Contents/Resources/lib/python{0}/todoist/.DS_Store',
+    'Contents/Resources/lib/python{0}/numpy/f2py/tests/src/assumed_shape/.f2py_f2cmap',
+    'Contents/Resources/lib/python{0}/site.pyo'
 ]
 
 SHARED_OBJECT_LIBRARY_WILDCARD:       str = '*.so'
@@ -88,15 +87,17 @@ class ApplicationSign(CommandExtended):
     def _cleanupCrud(self):
         """
         Ugh code signing will be the death of me
+
         Either invalid links or something code signing or verifying complains about
         """
-        removeOptions: str = self._getToolOptions(verboseOptions=REMOVE_OPTIONS_VERBOSE, quietOptions=REMOVE_OPTIONS_QUIET)
-        for partialCrud in CLEAN_UP_CRUD:
+        for templateCrud in CLEAN_UP_CRUD:
+
+            partialCrud: str = templateCrud.format(self._pythonVersion)
             fullCrud: Path = Path(self._applicationName) / partialCrud
 
-            removeIt: str = f'rm {removeOptions} {fullCrud}'
-
-            self._runCommand(removeIt)
+            fullCrud.unlink(missing_ok=True)
+            if self._verbose is True:
+                secho(f'Removed if it existed:  {fullCrud}')
 
     def _signLibraries(self):
         # noinspection SpellCheckingInspection

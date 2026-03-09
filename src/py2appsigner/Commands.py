@@ -277,6 +277,6 @@ if __name__ == '__main__':
     appNotarize(['-d', 'renderrob', '-a', 'renderrob', '--verbose'])
     """
 
-    py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'zipsign', '--delete-part-files'])
-
+    # py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'zipsign', '--delete-part-files'])
     # py2appSign(['-p', '3.13', '-a', 'umldiagrammer', '-d', 'umldiagrammer', 'zipsign', '--help'])
+    py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'appsign'])
