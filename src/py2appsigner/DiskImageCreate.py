@@ -1,24 +1,30 @@
+
+# from typing import List
+
 from logging import Logger
 from logging import getLogger
 
 from os import symlink
-from os import linesep as osLineSep
+# from os import linesep as osLineSep
 
 from pathlib import Path
 
 from shutil import copytree
 
-from subprocess import CompletedProcess
-from subprocess import run as subProcessRun
+from subprocess import PIPE
+from subprocess import STDOUT
+from subprocess import Popen as subProcessPopen
 
 from click import ClickException
 from click import secho
 
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
-APP_SUFFIX: str = 'app'
-DMG_SUFFIX: str = 'dmg'
+APP_SUFFIX:   str = 'app'
+DMG_SUFFIX:   str = 'dmg'
 STAGE_SUFFIX: str = '_dmg_stage'
+
+MAX_HDI_UTIL_VALUE: int = 100
 
 class DiskImageCreate:
     def __init__(self, environment: DiskImageEnvironment):
@@ -31,8 +37,6 @@ class DiskImageCreate:
 
         appName:          str  = self._environment.applicationName
         distDir:          Path = self._environment.distDirectory
-        # projectsBase:     Path = Path(self._environment.projectsBase)
-        # projectDirectory: str  = self._environment.projectDirectory
 
         tempStageDir: Path = Path('/tmp') / f'{appName}{STAGE_SUFFIX}'
 
@@ -60,19 +64,7 @@ class DiskImageCreate:
         applicationsSymlink: Path = tempStageDir / 'Applications'
         symlink('/Applications', applicationsSymlink)
 
-        # Build compressed UDZO .dmg using native macOS hdiutil
-        hdiUtilCmd: list[str] = [
-            'hdiutil', 'create',
-            '-volname', appName,
-            '-srcfolder', str(tempStageDir),
-            '-ov',
-            '-format', 'UDZO',
-            '-verbose',
-            str(dmgPath)
-        ]
-        secho(f'Start the disk image creation')
-        hdiUtilResult: CompletedProcess[str] = subProcessRun(hdiUtilCmd, check=True, capture_output=True, text=True)
-        secho(f'{osLineSep}{hdiUtilResult.stdout}')
+        self._runDiskImageCreationCLI(appName=appName, tempStageDir=tempStageDir, dmgPath=dmgPath)
 
         # Cleanup staging directory in /tmp using pathlib
         self._removeDirectoryTree(tempStageDir)
@@ -82,6 +74,48 @@ class DiskImageCreate:
 
     def signDiskImage(self):
         pass
+
+    def _runDiskImageCreationCLI(self, appName: str, tempStageDir: Path, dmgPath: Path):
+        """
+
+        Args:
+            appName:
+            tempStageDir:
+            dmgPath:
+        """
+        # Build compressed UDZO .dmg using native macOS hdiutil
+        hdiUtilCmd: list[str] = [
+            'hdiutil', 'create',
+            '-volname', appName,
+            '-srcfolder', str(tempStageDir),
+            '-ov',
+            '-format', 'UDZO',
+            str(dmgPath)
+        ]
+        if self._environment.verbose:
+            hdiUtilCmd.append('-verbose')
+            secho('Start the disk image creation')
+        else:
+            # progressBar: tqdm = tqdm(total=MAX_HDI_UTIL_VALUE)
+            # progressBar.set_description('Start the disk image creation')
+            hdiUtilCmd.append('-puppetstrings')
+
+        hdiProcess: subProcessPopen[str]
+        with subProcessPopen(
+            hdiUtilCmd,
+            stdout=PIPE,
+            stderr=STDOUT,
+            text=True,
+            bufsize=1
+        ) as hdiProcess:
+            if hdiProcess.stdout is not None:
+                cmdOutput: str
+                for cmdOutput in hdiProcess.stdout:
+                    secho(cmdOutput, nl=False)
+
+            returnCode: int = hdiProcess.wait()
+            if returnCode != 0:
+                raise ClickException(f'`hdiutil` failed with return code {returnCode}')
 
     def _computePath(self, distDir: Path, baseName: str, suffix: str) -> Path:
 
@@ -125,3 +159,21 @@ class DiskImageCreate:
                 self._removeDirectoryTree(itemPath)
 
         targetPath.rmdir()
+
+    # def _updateProgressBar(self, pBar: tqdm, cmdOutput: str):
+    #     noLf:       str       = cmdOutput.strip(osLineSep)
+    #     splitValue: List[str] = noLf.split(sep=':')
+    #
+    #     if len(splitValue) < 2:
+    #         secho(cmdOutput)
+    #     else:
+    #         if splitValue[0] == 'created':
+    #             pBar.update(100)
+    #             secho(cmdOutput)
+    #         else:
+    #             progressValue: float = float(splitValue[1])
+    #             if progressValue == -1.0:
+    #                 pass
+    #             else:
+    #                 intProgressValue: int = int(progressValue)
+    #                 pBar.update(intProgressValue)
