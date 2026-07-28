@@ -2,20 +2,23 @@
 import logging
 import logging.config
 
-from json import load as jsonLoad
+from json import loads as jsonLoads
 
 from importlib.resources import files
 from importlib.resources.abc import Traversable
 
+from pathlib import Path
 
-from click import command
 from click import group
-from click import pass_context
-from click import pass_obj
 from click import secho
 from click import clear
-from click import version_option
 from click import option
+from click import command
+from click import pass_obj
+from click import pass_context
+from click import version_option
+
+from click import Path as ClickPath
 
 from py2appsigner import __version__ as version
 
@@ -23,12 +26,17 @@ from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
 from py2appsigner.ApplicationStaple import ApplicationStaple
 from py2appsigner.ApplicationVerify import ApplicationVerify
+from py2appsigner.DiskImageCreate import DiskImageCreate
+
 from py2appsigner.Notary import Notary
+
+from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
 from py2appsigner.environment.Environment import Environment
-from py2appsigner.ZipSign import ZipSign
 from py2appsigner.environment.NotaryEnvironment import NotaryEnvironment
+
+from py2appsigner.ZipSign import ZipSign
 
 
 RESOURCES_PACKAGE_NAME:       str = 'py2appsigner.resources'
@@ -36,28 +44,17 @@ JSON_LOGGING_CONFIG_FILENAME: str = "loggingConfiguration.json"
 
 VERBOSE_OPTION_HELP: str = 'Include this option to instruct the command to echo the underlying CLI output'
 
-"""
-Put in type ignore because of strange error on that appeared on 8.1.4
-
-buildlackey/Commands.py:80: error: Argument 1 has incompatible type "Callable[[], Any]"; expected <nothing>  [arg-type]
-    @command
-"""
-
-
 def setUpLogging():
     """
     """
     traversable: Traversable = files(RESOURCES_PACKAGE_NAME) / JSON_LOGGING_CONFIG_FILENAME
 
-    loggingConfigFilename: str = str(traversable)
-
-    with open(loggingConfigFilename, 'r') as loggingConfigurationFile:
-        configurationDictionary = jsonLoad(loggingConfigurationFile)
+    loggingConfigContent:    str  = traversable.read_text(encoding='utf-8')
+    configurationDictionary: dict = jsonLoads(loggingConfigContent)
 
     logging.config.dictConfig(configurationDictionary)
     logging.logProcesses = False
     logging.logThreads = False
-
 
 @group
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
@@ -242,7 +239,6 @@ def information(notaryEnvironment: NotaryEnvironment, submission_id: str):
     notary: Notary = Notary(notaryEnvironment=notaryEnvironment)
     notary.information(submissionId=submission_id)
 
-
 @command()
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
 def py2appsigner():
@@ -261,8 +257,33 @@ def py2appsigner():
     secho('     notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>')
 
 
+@group
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+@option('--application-name', '-a', 'applicationName', required=True, type=str,                       help='The application name that py2app built')
+@option('--dist-directory',   '-d', 'distDirectory',   required=True, type=ClickPath(path_type=Path), help='Path to dist directory')
+@option('--verbose',           '-v', required=False,   is_flag=True,                                  help='Prepare to be overwhelmed')
+@pass_context
+def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
+    secho(f'{applicationName=} {applicationName=}')
+    setUpLogging()
+
+    environment: DiskImageEnvironment = DiskImageEnvironment(applicationName=applicationName, distDirectory=distDirectory, verbose=verbose)
+    ctx.obj = environment
+
+
+@dmgTool.command()
+@pass_obj
+def createDmg(environment: DiskImageEnvironment):
+    secho(f'{environment=}')
+    diskImageCreate: DiskImageCreate = DiskImageCreate(environment=environment)
+    diskImageCreate.createDiskImage()
+
+
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
+    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'createdmg',])
+    # dmgTool(['--version'])
+
     """
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])
@@ -279,4 +300,3 @@ if __name__ == '__main__':
 
     # py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'zipsign', '--delete-part-files'])
     # py2appSign(['-p', '3.13', '-a', 'umldiagrammer', '-d', 'umldiagrammer', 'zipsign', '--help'])
-    py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'appsign'])
