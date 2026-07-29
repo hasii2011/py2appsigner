@@ -1,11 +1,12 @@
 
-# from typing import List
+from typing import List
+from typing import Optional
 
 from logging import Logger
 from logging import getLogger
 
 from os import symlink
-# from os import linesep as osLineSep
+from os import linesep as osLineSep
 
 from pathlib import Path
 
@@ -18,6 +19,8 @@ from subprocess import Popen as subProcessPopen
 from click import ClickException
 from click import secho
 
+from tqdm import tqdm
+
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
 APP_SUFFIX:   str = 'app'
@@ -26,12 +29,49 @@ STAGE_SUFFIX: str = '_dmg_stage'
 
 MAX_HDI_UTIL_VALUE: int = 100
 
+STANDARD_HDI_UTIL_OPTIONS: List[str] = [
+    'hdiutil', 'create',
+    '-ov',
+    '-format', 'UDZO'
+]
+
+class FancyOutput:
+    def __init__(self):
+        self._progressBar: tqdm = tqdm(total=MAX_HDI_UTIL_VALUE)
+        self._progressBar.set_description('Start the disk image creation')
+
+    def updateProgress(self, cmdOutput: str):
+
+        noLf:       str       = cmdOutput.strip(osLineSep)
+        splitValue: List[str] = noLf.split(sep=':')
+
+        if len(splitValue) < 2:
+            self._progressBar.write(noLf)
+        elif splitValue[0] == 'created':
+            finalValue: int = MAX_HDI_UTIL_VALUE - self._progressBar.n
+            if finalValue > 0:
+                self._progressBar.update(finalValue)
+            self._progressBar.refresh()
+            self._progressBar.close()
+            secho(cmdOutput)
+        else:
+            progressValue: float = float(splitValue[1])
+            if progressValue == -1.0:
+                self._progressBar.update(1)     # fake it
+            else:
+                intProgressValue: int = int(progressValue)
+                deltaValue:       int = intProgressValue - self._progressBar.n
+                if deltaValue > 0:
+                    self._progressBar.update(deltaValue)
+
 class DiskImageCreate:
+
     def __init__(self, environment: DiskImageEnvironment):
 
         self.logger: Logger = getLogger(__name__)
 
-        self._environment: DiskImageEnvironment = environment
+        self._environment: DiskImageEnvironment  = environment
+        self._fancyOutput: Optional[FancyOutput] = None
 
     def createDiskImage(self):
 
@@ -84,21 +124,18 @@ class DiskImageCreate:
             dmgPath:
         """
         # Build compressed UDZO .dmg using native macOS hdiutil
-        hdiUtilCmd: list[str] = [
-            'hdiutil', 'create',
-            '-volname', appName,
+        hdiUtilCmd: List[str] = STANDARD_HDI_UTIL_OPTIONS + [
             '-srcfolder', str(tempStageDir),
-            '-ov',
-            '-format', 'UDZO',
+            '-volname', appName,
             str(dmgPath)
         ]
         if self._environment.verbose:
             hdiUtilCmd.append('-verbose')
-            secho('Start the disk image creation')
         else:
-            # progressBar: tqdm = tqdm(total=MAX_HDI_UTIL_VALUE)
-            # progressBar.set_description('Start the disk image creation')
             hdiUtilCmd.append('-puppetstrings')
+
+        if self._environment.verbose:
+            secho('Start the disk image creation')
 
         hdiProcess: subProcessPopen[str]
         with subProcessPopen(
@@ -111,7 +148,7 @@ class DiskImageCreate:
             if hdiProcess.stdout is not None:
                 cmdOutput: str
                 for cmdOutput in hdiProcess.stdout:
-                    secho(cmdOutput, nl=False)
+                    self._displayHDIUtilOutput(cmdOutput=cmdOutput)
 
             returnCode: int = hdiProcess.wait()
             if returnCode != 0:
@@ -160,20 +197,12 @@ class DiskImageCreate:
 
         targetPath.rmdir()
 
-    # def _updateProgressBar(self, pBar: tqdm, cmdOutput: str):
-    #     noLf:       str       = cmdOutput.strip(osLineSep)
-    #     splitValue: List[str] = noLf.split(sep=':')
-    #
-    #     if len(splitValue) < 2:
-    #         secho(cmdOutput)
-    #     else:
-    #         if splitValue[0] == 'created':
-    #             pBar.update(100)
-    #             secho(cmdOutput)
-    #         else:
-    #             progressValue: float = float(splitValue[1])
-    #             if progressValue == -1.0:
-    #                 pass
-    #             else:
-    #                 intProgressValue: int = int(progressValue)
-    #                 pBar.update(intProgressValue)
+    def _displayHDIUtilOutput(self, cmdOutput: str):
+
+        if self._environment.verbose:
+            secho(cmdOutput, nl=False)
+        else:
+            if self._fancyOutput is None:
+                self._fancyOutput = FancyOutput()
+            assert self._fancyOutput is not None, 'FancyOutput instance must be initialized'
+            self._fancyOutput.updateProgress(cmdOutput=cmdOutput)

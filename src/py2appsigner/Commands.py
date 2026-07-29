@@ -281,12 +281,11 @@ def createDmg(environment: DiskImageEnvironment):
 
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'createdmg'])
+    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg'])
     dmgTool(
         [
             '--application-name', 'UmlDiagrammer',
-            '--dist-directory', 'dist',
-            '--verbose',
+            '--dist-directory', 'dist', '--verbose',
             'createdmg',
         ]
     )
