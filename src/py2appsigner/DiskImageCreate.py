@@ -6,7 +6,6 @@ from logging import Logger
 from logging import getLogger
 
 from os import symlink
-from os import linesep as osLineSep
 
 from pathlib import Path
 
@@ -19,50 +18,18 @@ from subprocess import Popen as subProcessPopen
 from click import ClickException
 from click import secho
 
-from tqdm import tqdm
-
+from py2appsigner.HDIUtilPuppetStringOutput import HDIUtilPuppetStringOutput
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
 APP_SUFFIX:   str = 'app'
 DMG_SUFFIX:   str = 'dmg'
 STAGE_SUFFIX: str = '_dmg_stage'
 
-MAX_HDI_UTIL_VALUE: int = 100
-
 STANDARD_HDI_UTIL_OPTIONS: List[str] = [
     'hdiutil', 'create',
     '-ov',
     '-format', 'UDZO'
 ]
-
-class HDIUtilPuppetStringOutput:
-    def __init__(self):
-        self._progressBar: tqdm = tqdm(total=MAX_HDI_UTIL_VALUE)
-        self._progressBar.set_description('Start the disk image creation')
-
-    def updateProgress(self, cmdOutput: str):
-
-        noLf:       str       = cmdOutput.strip(osLineSep)
-        splitValue: List[str] = noLf.split(sep=':')
-
-        if len(splitValue) < 2:
-            self._progressBar.write(noLf)
-        elif splitValue[0] == 'created':
-            finalValue: int = MAX_HDI_UTIL_VALUE - self._progressBar.n
-            if finalValue > 0:
-                self._progressBar.update(finalValue)
-            self._progressBar.refresh()
-            self._progressBar.close()
-            secho(cmdOutput)
-        else:
-            progressValue: float = float(splitValue[1])
-            if progressValue == -1.0:
-                self._progressBar.update(1)     # fake it
-            else:
-                intProgressValue: int = int(progressValue)
-                deltaValue:       int = intProgressValue - self._progressBar.n
-                if deltaValue > 0:
-                    self._progressBar.update(deltaValue)
 
 class DiskImageCreate:
 
