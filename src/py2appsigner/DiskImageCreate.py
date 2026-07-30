@@ -35,7 +35,7 @@ STANDARD_HDI_UTIL_OPTIONS: List[str] = [
     '-format', 'UDZO'
 ]
 
-class FancyOutput:
+class HDIUtilPuppetStringOutput:
     def __init__(self):
         self._progressBar: tqdm = tqdm(total=MAX_HDI_UTIL_VALUE)
         self._progressBar.set_description('Start the disk image creation')
@@ -71,7 +71,7 @@ class DiskImageCreate:
         self.logger: Logger = getLogger(__name__)
 
         self._environment: DiskImageEnvironment  = environment
-        self._fancyOutput: Optional[FancyOutput] = None
+        self._fancyOutput: Optional[HDIUtilPuppetStringOutput] = None
 
     def createDiskImage(self):
 
@@ -203,6 +203,6 @@ class DiskImageCreate:
             secho(cmdOutput, nl=False)
         else:
             if self._fancyOutput is None:
-                self._fancyOutput = FancyOutput()
+                self._fancyOutput = HDIUtilPuppetStringOutput()
             assert self._fancyOutput is not None, 'FancyOutput instance must be initialized'
             self._fancyOutput.updateProgress(cmdOutput=cmdOutput)
