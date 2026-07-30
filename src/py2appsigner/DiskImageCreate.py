@@ -76,8 +76,8 @@ class DiskImageCreate:
         # Cleanup staging directory in /tmp using pathlib
         self._removeDirectoryTree(tempStageDir)
 
-        assert dmgPath.exists(), f'Error: Failed to create `.dmg` file at `{dmgPath}`'
-        secho(f'Successfully created DMG at: {dmgPath}')
+        if dmgPath.exists() is False:
+            raise ClickException(f'Error: Failed to create `.dmg` file at `{dmgPath}`')
 
     def signDiskImage(self):
         pass

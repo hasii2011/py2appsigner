@@ -28,7 +28,8 @@ class HDIUtilPuppetStringOutput:
                 self._progressBar.update(finalValue)
             self._progressBar.refresh()
             self._progressBar.close()
-            secho(cmdOutput)
+            secho(f'Success!  DMG {cmdOutput}')
+
         else:
             progressValue: float = float(splitValue[1])
             if progressValue == -1.0:

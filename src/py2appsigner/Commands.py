@@ -56,7 +56,7 @@ def setUpLogging():
     logging.logProcesses = False
     logging.logThreads = False
 
-@group
+@group(name='py2AppSign')
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
 @option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
@@ -65,7 +65,7 @@ def setUpLogging():
 @option('--identity',          '-i', required=False, help='Code signing identity')
 @option('--verbose',           '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
 @pass_context
-def py2appSign(ctx, python_version: str, application_name: str, projects_base: str = '', project_directory: str = '', identity: str = '', verbose: bool = False):
+def py2AppSign(ctx, python_version: str, application_name: str, projects_base: str = '', project_directory: str = '', identity: str = '', verbose: bool = False):
     """
     Specify a python version that the py2app application is using.
     \b
@@ -96,7 +96,7 @@ def py2appSign(ctx, python_version: str, application_name: str, projects_base: s
     ctx.obj = environment
 
 
-@py2appSign.command()
+@py2AppSign.command(name='zipSign')
 @option('--delete-part-files', '-d', required=False, is_flag=True, help='Remove opaque .part files')
 @pass_obj
 def zipSign(environment: Environment, delete_part_files: bool = False):
@@ -107,7 +107,7 @@ def zipSign(environment: Environment, delete_part_files: bool = False):
     zipsign.execute()
 
 
-@py2appSign.command()
+@py2AppSign.command(name='appSign')
 @option('--fix-lib',      '-l', required=False, is_flag=True, help='Fix broken library')
 @option('--fix-sym-link', '-s', required=False, is_flag=True, help='Fix invalid symbolic link')
 @pass_obj
@@ -257,13 +257,14 @@ def py2appsigner():
     secho('     notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>')
 
 
-@group
+@group(name='dmgTool')
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
 @option('--application-name', '-a', 'applicationName', required=True, type=str,                       help='The application name that py2app built')
 @option('--dist-directory',   '-d', 'distDirectory',   required=True, type=ClickPath(path_type=Path), help='Path to dist directory')
 @option('--verbose',           '-v', required=False,   is_flag=True,                                  help='Prepare to be overwhelmed')
 @pass_context
 def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
+
     secho(f'{applicationName=} {applicationName=}')
     setUpLogging()
 
@@ -271,28 +272,55 @@ def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
     ctx.obj = environment
 
 
-@dmgTool.command()
+@dmgTool.command(name='createDmg')
 @pass_obj
 def createDmg(environment: DiskImageEnvironment):
-    secho(f'{environment=}')
+
     diskImageCreate: DiskImageCreate = DiskImageCreate(environment=environment)
     diskImageCreate.createDiskImage()
 
 
-if __name__ == '__main__':
-    # noinspection SpellCheckingInspection
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg'])
-    dmgTool(
-        [
-            '--application-name', 'UmlDiagrammer',
-            '--dist-directory', 'dist', '--verbose',
-            'createdmg',
-        ]
-    )
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg',])
-    # dmgTool(['--version'])
+@dmgTool.command(name='signDmg')
+@pass_obj
+def signDmg(environment: DiskImageEnvironment):
+    secho(f'{environment=}')
 
     """
+    # Retrieve codesign identity from environment variable
+    codesignIdentity: str = environ.get('IDENTITY', '')
+
+    if codesignIdentity != '':
+        print(f'Codesigning DMG with identity: {codesignIdentity}')
+        codesignCmd: list[str] = [
+            'codesign',
+            '--force',
+            '--sign', codesignIdentity,
+            str(dmgPath)
+        ]
+        codesignResult: CompletedProcess[str] = subProcessRun(codesignCmd, check=True, capture_output=True, text=True)
+        print(f'codesign output:{osLineSep}{codesignResult.stdout}')
+        print(f'Successfully codesigned DMG: {dmgPath}')
+    else:
+        print('Warning: `IDENTITY` environment variable is not set. Skipping DMG codesigning.')
+    """
+
+
+if __name__ == '__main__':
+    # noinspection SpellCheckingInspection
+
+    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
+
+    dmgTool(['--version'])
+    """
+    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg'])
+    # dmgTool(
+    #     [
+    #         '--application-name', 'UmlDiagrammer',
+    #         '--dist-directory', 'dist', '--verbose',
+    #         'createdmg',
+    #     ]
+    # )
+    
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])
     py2appSign(['-v', '-p', '3.12', '-d', 'pyut', '-a', 'Pyut', 'zipsign'])
@@ -304,7 +332,9 @@ if __name__ == '__main__':
     notaryTool(['--keychain-profile', 'NOTARY_TOOL_APP_ID', 'history'])
     appVerify(['-a', 'Pyut', '-d', 'pyut', '--verbose'])
     appNotarize(['-d', 'renderrob', '-a', 'renderrob', '--verbose'])
-    """
 
     # py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'zipsign', '--delete-part-files'])
     # py2appSign(['-p', '3.13', '-a', 'umldiagrammer', '-d', 'umldiagrammer', 'zipsign', '--help'])
+"""
+    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'createDmg',])
+
