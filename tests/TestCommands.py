@@ -4,14 +4,14 @@ from typing import List
 
 from click.testing import CliRunner
 
-from py2appsigner.Commands import py2appSign
+from py2appsigner.Commands import py2AppSign
 
 
 def testZipSignHelp():
 
     runner: CliRunner = CliRunner()
 
-    result = runner.invoke(py2appSign, ['--help'])
+    result = runner.invoke(py2AppSign, ['--help'])
 
     assert result.exit_code == 0
 

@@ -31,6 +31,7 @@ from py2appsigner.ApplicationVerify import ApplicationVerify
 from py2appsigner.diskimage.DiskImageCreate import DiskImageCreate
 
 from py2appsigner.Notary import Notary
+from py2appsigner.diskimage.DiskImageSign import DiskImageSign
 
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
@@ -293,8 +294,8 @@ def signDmg(environment: DiskImageEnvironment):
     if environment.verbose:
         secho(f'Environment: {environment}')
 
-    secho(f'Codesigning DMG with identity: {environment.identity}')
-
+    diskImageSign: DiskImageSign = DiskImageSign(environment=environment)
+    diskImageSign.signDiskImage()
     """
         codesignCmd: list[str] = [
             'codesign',
@@ -313,15 +314,15 @@ def signDmg(environment: DiskImageEnvironment):
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
 
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
+    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
 
-    dmgTool(
-        [
-            '--application-name', 'UmlDiagrammer',
-            '--dist-directory', 'dist',
-            'createDmg',
-        ]
-    )
+    # dmgTool(
+    #     [
+    #         '--application-name', 'UmlDiagrammer',
+    #         '--dist-directory', 'dist',
+    #         'createDmg',
+    #     ]
+    # )
 
     """
     

@@ -13,16 +13,18 @@ from shutil import copytree
 
 from subprocess import PIPE
 from subprocess import STDOUT
-from subprocess import Popen as subProcessPopen
+from subprocess import Popen as subProcessPOpen
 
 from click import ClickException
 from click import secho
 
+from py2appsigner.diskimage.BaseDiskImage import BaseDiskImage
+from py2appsigner.diskimage.BaseDiskImage import DMG_SUFFIX
 from py2appsigner.diskimage.HDIUtilPuppetStringOutput import HDIUtilPuppetStringOutput
+
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
 APP_SUFFIX:   str = 'app'
-DMG_SUFFIX:   str = 'dmg'
 STAGE_SUFFIX: str = '_dmg_stage'
 
 STANDARD_HDI_UTIL_OPTIONS: List[str] = [
@@ -31,19 +33,19 @@ STANDARD_HDI_UTIL_OPTIONS: List[str] = [
     '-format', 'UDZO'
 ]
 
-class DiskImageCreate:
+class DiskImageCreate(BaseDiskImage):
 
     def __init__(self, environment: DiskImageEnvironment):
 
+        super().__init__(environment=environment)
         self.logger: Logger = getLogger(__name__)
 
-        self._environment: DiskImageEnvironment  = environment
         self._fancyOutput: Optional[HDIUtilPuppetStringOutput] = None
 
     def createDiskImage(self):
 
-        appName:          str  = self._environment.applicationName
-        distDir:          Path = self._environment.distDirectory
+        appName: str  = self._environment.applicationName
+        distDir: Path = self._environment.distDirectory
 
         tempStageDir: Path = Path('/tmp') / f'{appName}{STAGE_SUFFIX}'
 
@@ -79,9 +81,6 @@ class DiskImageCreate:
         if dmgPath.exists() is False:
             raise ClickException(f'Error: Failed to create `.dmg` file at `{dmgPath}`')
 
-    def signDiskImage(self):
-        pass
-
     def _runDiskImageCreationCLI(self, appName: str, tempStageDir: Path, dmgPath: Path):
         """
 
@@ -104,8 +103,8 @@ class DiskImageCreate:
         if self._environment.verbose:
             secho('Start the disk image creation')
 
-        hdiProcess: subProcessPopen[str]
-        with subProcessPopen(
+        hdiProcess: subProcessPOpen[str]
+        with subProcessPOpen(
             hdiUtilCmd,
             stdout=PIPE,
             stderr=STDOUT,
@@ -120,21 +119,6 @@ class DiskImageCreate:
             returnCode: int = hdiProcess.wait()
             if returnCode != 0:
                 raise ClickException(f'`hdiutil` failed with return code {returnCode}')
-
-    def _computePath(self, distDir: Path, baseName: str, suffix: str) -> Path:
-
-        projectsBase:     Path = Path(self._environment.projectsBase)
-        projectDirectory: str  = self._environment.projectDirectory
-
-        fullPath: Path
-        fullName: str = f'{baseName}.{suffix}'
-        if distDir.is_absolute():
-            fullPath = distDir / fullName
-        else:
-            fullProjectPath: Path = projectsBase / projectDirectory
-            fullPath = fullProjectPath / distDir / fullName
-
-        return fullPath
 
     def _removeDirectoryTree(self, targetPath: Path):
         """
