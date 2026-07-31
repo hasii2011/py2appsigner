@@ -9,6 +9,8 @@ from importlib.resources.abc import Traversable
 
 from pathlib import Path
 
+from os import linesep as osLineSep
+
 from click import group
 from click import secho
 from click import clear
@@ -265,7 +267,8 @@ def py2appsigner():
 @pass_context
 def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
 
-    secho(f'{applicationName=} {applicationName=}')
+    if verbose:
+        secho(f'Application Name: `{applicationName}`{osLineSep}distDirectory: `{str(distDirectory)}`')
     setUpLogging()
 
     environment: DiskImageEnvironment = DiskImageEnvironment(applicationName=applicationName, distDirectory=distDirectory, verbose=verbose)
@@ -276,6 +279,9 @@ def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
 @pass_obj
 def createDmg(environment: DiskImageEnvironment):
 
+    if environment.verbose:
+        secho(f'{environment=}')
+
     diskImageCreate: DiskImageCreate = DiskImageCreate(environment=environment)
     diskImageCreate.createDiskImage()
 
@@ -283,14 +289,13 @@ def createDmg(environment: DiskImageEnvironment):
 @dmgTool.command(name='signDmg')
 @pass_obj
 def signDmg(environment: DiskImageEnvironment):
-    secho(f'{environment=}')
+
+    if environment.verbose:
+        secho(f'Environment: {environment}')
+
+    secho(f'Codesigning DMG with identity: {environment.identity}')
 
     """
-    # Retrieve codesign identity from environment variable
-    codesignIdentity: str = environ.get('IDENTITY', '')
-
-    if codesignIdentity != '':
-        print(f'Codesigning DMG with identity: {codesignIdentity}')
         codesignCmd: list[str] = [
             'codesign',
             '--force',
@@ -308,18 +313,19 @@ def signDmg(environment: DiskImageEnvironment):
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
 
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
+    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
 
-    dmgTool(['--version'])
     """
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg'])
-    # dmgTool(
-    #     [
-    #         '--application-name', 'UmlDiagrammer',
-    #         '--dist-directory', 'dist', '--verbose',
-    #         'createdmg',
-    #     ]
-    # )
+    dmgTool(
+        [
+            '--application-name', 'UmlDiagrammer',
+            '--dist-directory', 'dist',
+            'createDmg',
+        ]
+    )
+    
+    dmgTool(['--version'])
+    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg'])
     
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])
@@ -336,5 +342,3 @@ if __name__ == '__main__':
     # py2appSign(['-v', '-p', '3.13', '-d', 'umldiagrammer', '-a', 'umldiagrammer', 'zipsign', '--delete-part-files'])
     # py2appSign(['-p', '3.13', '-a', 'umldiagrammer', '-d', 'umldiagrammer', 'zipsign', '--help'])
 """
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'createDmg',])
-

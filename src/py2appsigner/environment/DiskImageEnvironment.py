@@ -34,3 +34,12 @@ class DiskImageEnvironment(ExternalEnvironment):
         self.applicationName = applicationName
         self.distDirectory   = distDirectory
         self.verbose         = verbose
+
+    def __str__(self) -> str:
+
+        return (
+            f'{super().__str__()}'
+        )
+
+    def __repr__(self) -> str:
+        return self.__str__()

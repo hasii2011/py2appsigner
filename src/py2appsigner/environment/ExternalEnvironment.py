@@ -1,8 +1,8 @@
+
 from dataclasses import dataclass
-from logging import Logger
-from logging import getLogger
 
 from os import environ as osEnvironment
+from os import linesep as osLineSep
 
 from click import ClickException
 
@@ -18,8 +18,6 @@ class ExternalEnvironment:
     identity:         str  = ''
 
     def __init__(self, projectsBase: str = '', projectDirectory: str = '', identity: str = ''):
-
-        self.logger: Logger = getLogger(__name__)
 
         self.projectsBase     = projectsBase
         self.projectDirectory = projectDirectory
@@ -56,3 +54,14 @@ class ExternalEnvironment:
             return False
         else:
             return True
+
+    def __str__(self) -> str:
+        return (
+            f'{osLineSep}'
+            f'Project Base:      {self.projectsBase}{osLineSep}'
+            f'Project Directory: {self.projectDirectory}{osLineSep}'
+            f'Identity:          {self.identity}{osLineSep}'
+        )
+
+    def __repr__(self) -> str:
+        return self.__str__()
