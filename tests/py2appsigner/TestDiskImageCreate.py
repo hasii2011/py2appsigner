@@ -9,9 +9,9 @@ from pathlib import Path
 
 from codeallybasic.UnitTestBase import UnitTestBase
 
-from py2appsigner.DiskImageCreate import APP_SUFFIX
-from py2appsigner.DiskImageCreate import DMG_SUFFIX
-from py2appsigner.DiskImageCreate import DiskImageCreate
+from py2appsigner.diskimage.DiskImageCreate import APP_SUFFIX
+from py2appsigner.diskimage.DiskImageCreate import DMG_SUFFIX
+from py2appsigner.diskimage.DiskImageCreate import DiskImageCreate
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
 from py2appsigner.environment.ExternalEnvironment import ENV_PROJECT

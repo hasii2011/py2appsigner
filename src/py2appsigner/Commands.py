@@ -28,7 +28,7 @@ from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
 from py2appsigner.ApplicationStaple import ApplicationStaple
 from py2appsigner.ApplicationVerify import ApplicationVerify
-from py2appsigner.DiskImageCreate import DiskImageCreate
+from py2appsigner.diskimage.DiskImageCreate import DiskImageCreate
 
 from py2appsigner.Notary import Notary
 
@@ -313,9 +313,8 @@ def signDmg(environment: DiskImageEnvironment):
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
 
-    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
+    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
 
-    """
     dmgTool(
         [
             '--application-name', 'UmlDiagrammer',
@@ -323,6 +322,8 @@ if __name__ == '__main__':
             'createDmg',
         ]
     )
+
+    """
     
     dmgTool(['--version'])
     dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg'])

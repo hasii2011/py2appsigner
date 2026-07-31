@@ -18,7 +18,7 @@ from subprocess import Popen as subProcessPopen
 from click import ClickException
 from click import secho
 
-from py2appsigner.HDIUtilPuppetStringOutput import HDIUtilPuppetStringOutput
+from py2appsigner.diskimage.HDIUtilPuppetStringOutput import HDIUtilPuppetStringOutput
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
 APP_SUFFIX:   str = 'app'
