@@ -11,9 +11,13 @@ The goals for this project are:
 - Consistent CLI interface across Python versions 
 - Installable in a developer's virtual environment
 - Default the signing parameters to environment variables.  This allows for short CLI invocations.  However, still allow CLI parameter overrides
-- Use the built-in keychain to store the notarization tool application ID.  This avoid having to either key-in or recall from the bash history a long, long application ID.
+- Use the built-in keychain to store the notarization tool application ID.  This avoids having to either key in or recall from the bash history a long, long application ID.
 
-Installation
+## General Workflow
+
+![macOS_DistributionWorkflow](./images/macOS_DistributionWorkflow.png)
+
+## Installation
 ```bash
 pip install py2appsigner
 ```
@@ -27,9 +31,9 @@ This project uses [Click](https://click.palletsprojects.com/) for CLI handling
 The above commands depend on the following environment variables.
 
 ```bash
-PROJECTS_BASE             -  The local directory where the python projects are based
-PROJECT                   -  The name of the project;  It should be a directory name
-IDENTITY                  - Your Apple Developer ID 
+PROJECTS_BASE      -  The local directory where the python projects are based
+PROJECT                   -  The name of the project; it should be a directory name
+IDENTITY                 - Your Apple Developer ID 
 ```
 
  An example, of a PROJECTS_BASE is:
@@ -44,8 +48,8 @@ The PROJECT environment variable should be set on a project by project basis.  I
 these.  An example of a .envrc follows:
 
 ```bash
-export PROJECT=pyutmodel
-source pyenv-3.10.6/bin/activate
+export PROJECT=umldiagrammer
+source pyenv-3.13.10/bin/activate
 ```
 
 ## Python Console Scripts
@@ -53,35 +57,36 @@ source pyenv-3.10.6/bin/activate
 ### Sign the internal zip file
 
 ```bash
-py2appSign -p 3.11 -d pyut -a Pyut  zipsign
+py2AppSign -p 3.13 -d umldiagrammer -a UmlDiagrammer  zipSign
 ```
 
 
 ### Sign the application
 
 ```bash
-py2appSign -p 3.11 -d pyut -a Pyut  appsign
+py2AppSign -p 3.11 -d umldiagrammer -a UmlDiagrammer  appSign
 ```
-
 
 ### Notarize the application
 
+Only do the notarize, staple, and verify of the application if you are not creating .dmg d
+
 ```bash
-appNotarize -d pyut -a Pyut --verbose
+appNotarize -d umldiagrammer -a UmlDiagrammer --verbose
 ```
 
 
 ### Staple the application
 
 ```bash
-appStaple -d pyut -a Pyut --verbose
+appStaple -d umldiagrammer -a UmlDiagrammer --verbose
 ```
 
 
 ### Verify application signing
 
 ```bash
-appVerify -d pyut -a Pyut
+appVerify -d umldiagrammer -a UmlDiagrammer
 ```
 
 ### Utility Scripts
@@ -103,10 +108,9 @@ Stores the history in the file `notaryHistory.log`.
 #### Notary Details
 
 ```bash
-notaryTool information -i <submission id)
+notaryTool information -i <submission id>
 ```
-`e.g. 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad
-`
+`e.g. 5f57fc1e-23d3-42ab-b0ad-ec1d2635c4ad`
 
 ##### Specify a profile name
 
@@ -117,20 +121,18 @@ notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>
 
 Stores the output in the file `notary-{submission id}.log`
 
-
-
 ## Weird options added over the years
 
-As Python has rolled versions and I use the application signer for different application several weirdnesses have appeared as py2app builds the binary.   Rather that patching each individual OS X application I added the sub commands in case you encountered these errors that cause the Apple CLI (`/usr/sbin/spctl`) to fail
+As Python has rolled versions and I use the application signer for different applications, several weirdnesses have appeared as py2app builds the binary.   Rather than patching each individual OS X application I added the subcommands in case you encountered these errors that cause the Apple CLI (`/usr/sbin/spctl`) to fail.
 
 ### The zipsign subcommand has the following option
 
 `--delete-part-files`
 This problem surfaced with Python 3.13.  This option removes these bad files that cause `appVerify` to fail.  These are in the internal `python313.zip` file in the `test/zipimport_data` subdirectory.
 
-I only remove the `.part` files and the `zipimport_data` directory.  These leads me to question the existence of `test` subdirectory in the Python zip file with lots of other subdirectories.   I may experiment in the future in entirely removing the `test` subdirectory.  Currently, its size is 7.7 MB.
+I only remove the `.part` files and the `zipimport_data` directory.  This leads me to question the existence of the `test` subdirectory in the Python zip file with lots of other subdirectories.   I may experiment in the future in entirely removing the `test` subdirectory.  Currently, its size is 7.7 MB.
 
-### The `appsign` subcommand has the followiing options
+### The `appsign` subcommand has the following options
 
 `--fix-lib`
 `--fix-sym-link`
@@ -139,7 +141,7 @@ I only remove the `.part` files and the `zipimport_data` directory.  These leads
 
 This option retrieves  the following dynamic library from Homebrew.  The one packaged in the .app file is unsignable.
 
-The option copies it into the applicaiton.  Currently, works only on Apple Silicon OS X andwith [Homebrew](https://brew.sh) installed.  You must manally do this on Intel OS X.
+The option copies it into the application.  Currently, it works only on Apple Silicon OS X and with [Homebrew](https://brew.sh) installed.  You must manually do this on Intel OS X.
 
 See: https://stackoverflow.com/questions/62095338/py2app-fails-macos-signing-on-liblzma-5-dylib
 
@@ -157,17 +159,28 @@ This option removes the following symbolic link from the application binary befo
 
 `{application}.app/Contents/Resources/lib/python{python version}/site.pyo`
 
-Leaving this file in place with a signed and notarized application causes it to  fail the appVerify phase and renders the binary unusable
+Leaving this file in place with a signed and notarized application causes it to fail the appVerify phase and renders the binary unusable.
 
+### Disk Image Tools
+
+```bash
+dmgTool --application-name UmlDiagrammer --dist-directory dist --verbose createDmg
+```
+This command creates a .dmg file.  The above assumes that the macOS app exists in the dist directory.  The verbose option is extremely verbose.  The *dist* option can be a fully qualified directory.  If it is not, this command assumes it is in *${PROJECTS_BASE}/${PROJECT}*.
+
+```bash
+dmgTool --application-name UmlDiagrammer --dist-directory dist signDmg
+```
+This command signs the .dmg file created by the `createDmg` subcommand.
+
+## Note
+
+For all kinds of problems, requests, enhancements, bug reports, etc., please drop me an e-mail.
 ___
 
 Written by <a href="mailto:email@humberto.a.sanchez.ii@gmail.com?subject=Hello Humberto">Humberto A. Sanchez II</a>  (C) 2026
 
 ---
-
-## Note
-
-For all kind of problems, requests, enhancements, bug reports, etc., please drop me an e-mail.
 
 
 ![Humberto's Modified Logo](https://raw.githubusercontent.com/wiki/hasii2011/gittodoistclone/images/SillyGitHub.png)
@@ -178,7 +191,7 @@ I am concerned about GitHub's Copilot project
 
 I urge you to read about the [Give up GitHub](https://GiveUpGitHub.org) campaign from [the Software Freedom Conservancy](https://sfconservancy.org).
 
-While I do not advocate for all the issues listed there I do not like that a company like Microsoft may profit from open source projects.
+While I do not advocate for all the issues listed there, I do not like that a company like Microsoft may profit from open source projects.
 
 I continue to use GitHub because it offers the services I need for free.  But, I continue to monitor their terms of service.
 

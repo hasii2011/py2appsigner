@@ -47,9 +47,10 @@ version = {attr = 'py2appsigner.__version__'}
 
 [project.scripts]
 
-py2appSign = "py2appsigner.Commands:py2appSign"
-appNotarize = "py2appsigner.Commands:appNotarize"
-appStaple = "py2appsigner.Commands:appStaple"
-appVerify = "py2appsigner.Commands:appVerify"
-notaryTool = "py2appsigner.Commands:notaryTool"
-py2appsigner = "py2appsigner.Commands:py2appsigner"
+py2AppSign = 'py2appsigner.Commands:py2AppSign'
+appNotarize = 'py2appsigner.Commands:appNotarize'
+appStaple = 'py2appsigner.Commands:appStaple'
+appVerify = 'py2appsigner.Commands:appVerify'
+notaryTool = 'py2appsigner.Commands:notaryTool'
+dmgTool = 'py2appsigner.Commands:dmgTool'
+py2AppSigner = 'py2appsigner.Commands:py2AppSigner'

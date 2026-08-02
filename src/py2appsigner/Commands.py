@@ -242,22 +242,25 @@ def information(notaryEnvironment: NotaryEnvironment, submission_id: str):
     notary: Notary = Notary(notaryEnvironment=notaryEnvironment)
     notary.information(submissionId=submission_id)
 
-@command()
+@command(name='py2AppSigner')
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
-def py2appsigner():
+def py2AppSigner():
     clear()
     secho('Example Commands:')
-    secho('     py2appSign -p 3.11 -d pyut -a Pyut  --verbose zipsign')
-    secho('     py2appSign -p 3.11 -d pyut -a Pyut  --verbose appsign')
+    secho('     py2appSign -p 3.11 -d umldiagrammer -a UmlDiagrammer  --verbose zipsign')
+    secho('     py2appSign -p 3.11 -d umldiagrammer -a UmlDiagrammer  --verbose appsign')
     secho('')
-    secho('     appNotarize -d pyut -a Pyut --verbose')
-    secho('     appStaple   -d pyut -a Pyut --verbose')
-    secho('     appVerify   -d pyut -a Pyut')
+    secho('     appNotarize -d umldiagrammer -a UmlDiagrammer --verbose')
+    secho('     appStaple   -d umldiagrammer -a UmlDiagrammer --verbose')
+    secho('     appVerify   -d umldiagrammer -a UmlDiagrammer')
     secho('')
     secho('     notaryTool history')
     secho('     notaryTool -p NOTARY_TOOL_APP_ID history')
     secho('     notaryTool information -i <submission id>')
     secho('     notaryTool -p NOTARY_TOOL_APP_ID information -i <submission id>')
+    secho('')
+    secho('     dmgTool -a UmlDiagrammer -d dist createDmg')
+    secho('     dmgTool -a UmlDiagrammer -d dist signDmg')
 
 
 @group(name='dmgTool')
@@ -267,6 +270,14 @@ def py2appsigner():
 @option('--verbose',           '-v', required=False,   is_flag=True,                                  help='Prepare to be overwhelmed')
 @pass_context
 def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
+    """
+    This subcommand createDmg, creates a .dmg file.  The above assumes that the macOS app exists in the dist directory.
+    The verbose option is extremely verbose.  The *dist* option can be a fully qualified directory.  If it is not,
+    this command assumes it is in ${PROJECTS_BASE}/${PROJECT}.
+
+    The subcommand signDmg, signs the .dmg file created by the `createDmg` subcommand.
+
+    """
 
     if verbose:
         secho(f'Application Name: `{applicationName}`{osLineSep}distDirectory: `{str(distDirectory)}`')
@@ -314,7 +325,9 @@ def signDmg(environment: DiskImageEnvironment):
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
 
-    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
+    dmgTool(['--help'])
+
+    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
 
     # dmgTool(
     #     [
