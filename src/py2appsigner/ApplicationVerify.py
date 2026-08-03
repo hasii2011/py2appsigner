@@ -5,10 +5,9 @@ from logging import getLogger
 from click import secho
 
 from py2appsigner.CommandBasic import CommandBasic
-from py2appsigner.environment.Environment import Environment
+from py2appsigner.Common import SECURITY_ASSESSMENT_COMMAND
 
-# noinspection SpellCheckingInspection
-SECURITY_ASSESSMENT_COMMAND: str = '/usr/sbin/spctl'
+from py2appsigner.environment.Environment import Environment
 
 
 class ApplicationVerify(CommandBasic):

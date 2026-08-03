@@ -34,6 +34,7 @@ from py2appsigner.Notary import Notary
 from py2appsigner.diskimage.DiskImageNotarize import DiskImageNotarize
 from py2appsigner.diskimage.DiskImageSign import DiskImageSign
 from py2appsigner.diskimage.DiskImageStaple import DiskImageStaple
+from py2appsigner.diskimage.DiskImageVerify import DiskImageVerify
 
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
@@ -338,6 +339,8 @@ def dmgNotarize(application_name: str, projects_base: str = '', project_director
 
     diskImageNotarize: DiskImageNotarize = DiskImageNotarize(environment=environment)
     diskImageNotarize.execute()
+
+
 @command
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
 @option('--application-name',  '-a', required=True,  help='The application name that py2app built')
@@ -351,8 +354,18 @@ def dmgStaple(application_name: str, projects_base: str = '', project_directory:
     diskImageStaple: DiskImageStaple = DiskImageStaple(environment=environment)
     diskImageStaple.execute()
 
-def dmgVerify():
-    pass
+@command()
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+@option('--application-name',  '-a', required=True,  help='The application name that py2app built')
+@option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
+@option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
+@option('--verbose',           '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
+def dmgVerify(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
+
+    environment: BasicEnvironment = BasicEnvironment(applicationName=application_name, projectsBase=projects_base, projectDirectory=project_directory, verbose=verbose)
+
+    diskImageVerify: DiskImageVerify = DiskImageVerify(environment=environment)
+    diskImageVerify.execute()
 
 
 if __name__ == '__main__':
@@ -360,8 +373,9 @@ if __name__ == '__main__':
 
     # dmgNotarize(['-d', 'umldiagrammer', '--application-name', 'UmlDiagrammer', '--verbose'])
     # dmgNotarize(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
-    dmgStaple(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
-    # dmgTool(['--version']),
+    # dmgStaple(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
+    dmgVerify(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
+    # dmgVerify(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
 
     # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
 

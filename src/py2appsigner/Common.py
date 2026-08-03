@@ -5,3 +5,6 @@ DEFAULT_NOTARY_TOOL_KEYCHAIN_PROFILE_NAME: str = 'NOTARY_TOOL_APP_ID'
 PROGRESS_BAR_UNITS: str = ' Libraries '
 
 DMG_SUFFIX:   str = 'dmg'
+
+# noinspection SpellCheckingInspection
+SECURITY_ASSESSMENT_COMMAND: str = '/usr/sbin/spctl'
