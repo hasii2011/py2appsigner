@@ -16,9 +16,8 @@ class ApplicationStaple(CommandBasic):
         self.logger: Logger = getLogger(__name__)
 
     def execute(self):
-        # echo "${txReverse}Start stapling: ${FULL_APP_NAME}${txReset}"
-        # xcrun stapler staple ${FULL_APP_NAME}
-        secho('Call Apple for notary service', reverse=True)
+
+        secho('Apple\'s CloudKit Notary Ticket server.', reverse=True)
 
         stapleIt: str = f'xcrun stapler staple {self._applicationName}'
 

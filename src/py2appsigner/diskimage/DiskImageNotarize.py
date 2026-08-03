@@ -23,6 +23,10 @@ class DiskImageNotarize(CommandBasic):
 
         dmgFile:       str = f'{self._fullPath}{BUILD_DIR}{self._basicEnvironment.applicationName}.{DMG_SUFFIX}'
 
-        notarizeIt: str = f'xcrun notarytool submit {dmgFile} --keychain-profile "{self._keyChainProfileName}" --wait'
+        baseCmd: str = 'xcrun '
+        if self._basicEnvironment.verbose:
+            baseCmd = f'{baseCmd} --verbose'
+
+        notarizeIt: str = f'{baseCmd} notarytool submit {dmgFile} --keychain-profile "{self._keyChainProfileName}" --wait'
 
         self._runCommand(notarizeIt)
