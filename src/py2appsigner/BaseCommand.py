@@ -10,7 +10,6 @@ from subprocess import check_call as subProcessCheckCall
 from subprocess import STDOUT
 
 from click import ClickException
-from click import secho
 
 
 class BaseCommand:
@@ -34,7 +33,7 @@ class BaseCommand:
 
         try:
             if self._verbose is True:
-                secho(self._execute(command=command))
+                self._execute(command=command)
             else:
                 subProcessRun([command], shell=True, capture_output=True, text=True, check=True)
         except CalledProcessError as cpe:

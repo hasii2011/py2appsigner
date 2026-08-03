@@ -27,7 +27,7 @@ class ApplicationNotarize(CommandBasic):
     def execute(self):
         #
         #  assumes Xcode 13 is installed
-        #  assumes you added an entry APP_PASSWORD to your keychain
+        #  assumes you added an entry NOTARY_TOOL_APP_ID to your keychain
         #
         clear()
         zipFile:       str = f'{self._fullPath}{BUILD_DIR}{self._basicEnvironment.applicationName}.{ZIP_SUFFIX}'

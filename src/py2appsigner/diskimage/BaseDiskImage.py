@@ -3,8 +3,6 @@ from pathlib import Path
 
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
-DMG_SUFFIX:   str = 'dmg'
-
 class BaseDiskImage:
     def __init__(self, environment: DiskImageEnvironment):
 

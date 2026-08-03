@@ -18,8 +18,9 @@ from subprocess import Popen as subProcessPOpen
 from click import ClickException
 from click import secho
 
+from py2appsigner.Common import DMG_SUFFIX
+
 from py2appsigner.diskimage.BaseDiskImage import BaseDiskImage
-from py2appsigner.diskimage.BaseDiskImage import DMG_SUFFIX
 from py2appsigner.diskimage.HDIUtilPuppetStringOutput import HDIUtilPuppetStringOutput
 
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment

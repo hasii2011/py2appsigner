@@ -31,6 +31,7 @@ from py2appsigner.ApplicationVerify import ApplicationVerify
 from py2appsigner.diskimage.DiskImageCreate import DiskImageCreate
 
 from py2appsigner.Notary import Notary
+from py2appsigner.diskimage.DiskImageNotarize import DiskImageNotarize
 from py2appsigner.diskimage.DiskImageSign import DiskImageSign
 
 from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
@@ -160,7 +161,8 @@ def appNotarize(application_name: str, projects_base: str = '', project_director
     The environment variable for project directory is 'PROJECT'.  This is just the
     simple project directory name.
 
-    Assumes the developer stored application specific ID with the name 'APP_PASSWORD'
+    Assumes the developer stored application specific ID in the Apple key chain
+     with the name 'NOTARY_TOOL_APP_ID'
 
     """
     environment: BasicEnvironment = BasicEnvironment(applicationName=application_name, projectsBase=projects_base, projectDirectory=project_directory, verbose=verbose)
@@ -261,6 +263,7 @@ def py2AppSigner():
     secho('')
     secho('     dmgTool -a UmlDiagrammer -d dist createDmg')
     secho('     dmgTool -a UmlDiagrammer -d dist signDmg')
+    secho('     dmgNotarize -d umldiagrammer -a UmlDiagrammer --verbose')
 
 
 @group(name='dmgTool')
@@ -278,7 +281,6 @@ def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
     The subcommand signDmg, signs the .dmg file created by the `createDmg` subcommand.
 
     """
-
     if verbose:
         secho(f'Application Name: `{applicationName}`{osLineSep}distDirectory: `{str(distDirectory)}`')
     setUpLogging()
@@ -307,25 +309,48 @@ def signDmg(environment: DiskImageEnvironment):
 
     diskImageSign: DiskImageSign = DiskImageSign(environment=environment)
     diskImageSign.signDiskImage()
+
+@command
+@version_option(version=f'{version}', message='%(prog)s version %(version)s')
+@option('--application-name',  '-a', required=True,  help='The application name that py2app built')
+@option('--projects-base',     '-b', required=False, help='Projects base, overrides environment variable')
+@option('--project-directory', '-d', required=False, help='Project directory, overrides environment variable')
+@option('--verbose',           '-v', required=False, is_flag=True, help=VERBOSE_OPTION_HELP)
+def dmgNotarize(application_name: str, projects_base: str = '', project_directory: str = '', verbose: bool = False):
     """
-        codesignCmd: list[str] = [
-            'codesign',
-            '--force',
-            '--sign', codesignIdentity,
-            str(dmgPath)
-        ]
-        codesignResult: CompletedProcess[str] = subProcessRun(codesignCmd, check=True, capture_output=True, text=True)
-        print(f'codesign output:{osLineSep}{codesignResult.stdout}')
-        print(f'Successfully codesigned DMG: {dmgPath}')
-    else:
-        print('Warning: `IDENTITY` environment variable is not set. Skipping DMG codesigning.')
+    Specify the disk image name created by dmgTool ... createDmg
+    \b
+
+    The environment variable for projects base is 'PROJECTS_BASE'.  This is a fully qualified
+    directory name.
+    \b
+
+    The environment variable for project directory is 'PROJECT'.  This is just the
+    simple project directory name.
+
+    Assumes the developer stored the application specific ID in the macOS keychain
+    with the name 'NOTARY_TOOL_APP_ID'
+
     """
+
+    environment: BasicEnvironment = BasicEnvironment(applicationName=application_name, projectsBase=projects_base, projectDirectory=project_directory, verbose=verbose)
+
+    diskImageNotarize: DiskImageNotarize = DiskImageNotarize(environment=environment)
+    diskImageNotarize.execute()
+
+def dmgStaple():
+    pass
+
+def dmgVerify():
+    pass
 
 
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
 
-    dmgTool(['--help'])
+    # dmgNotarize(['-d', 'umldiagrammer', '--application-name', 'UmlDiagrammer', '--verbose'])
+    dmgNotarize(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
+    # dmgTool(['--version']),
 
     # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
 

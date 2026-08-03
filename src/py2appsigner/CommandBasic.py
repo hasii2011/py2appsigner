@@ -6,8 +6,6 @@ from abc import ABCMeta
 
 from abc import abstractmethod
 
-from click import secho
-
 from py2appsigner.BaseCommand import BaseCommand
 from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 
@@ -33,8 +31,7 @@ class MetaBaseCommand(ABCMeta, type(BaseCommand)):      # type: ignore
     pass
 
 
-class CommandBasic(BaseCommand):
-    __metaclass = MetaBaseCommand
+class CommandBasic(BaseCommand, metaclass=ABCMeta):
 
     def __init__(self, environment: BasicEnvironment):
 
