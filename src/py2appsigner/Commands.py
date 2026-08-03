@@ -20,27 +20,25 @@ from click import pass_obj
 from click import pass_context
 from click import version_option
 
-from click import Path as ClickPath
-
 from py2appsigner import __version__ as version
 
 from py2appsigner.ApplicationNotarize import ApplicationNotarize
 from py2appsigner.ApplicationSign import ApplicationSign
 from py2appsigner.ApplicationStaple import ApplicationStaple
 from py2appsigner.ApplicationVerify import ApplicationVerify
-from py2appsigner.diskimage.DiskImageCreate import DiskImageCreate
 
 from py2appsigner.Notary import Notary
-from py2appsigner.diskimage.DiskImageNotarize import DiskImageNotarize
+
 from py2appsigner.diskimage.DiskImageSign import DiskImageSign
+from py2appsigner.diskimage.DiskImageCreate import DiskImageCreate
 from py2appsigner.diskimage.DiskImageStaple import DiskImageStaple
 from py2appsigner.diskimage.DiskImageVerify import DiskImageVerify
-
-from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
-from py2appsigner.environment.BasicEnvironment import BasicEnvironment
+from py2appsigner.diskimage.DiskImageNotarize import DiskImageNotarize
 
 from py2appsigner.environment.Environment import Environment
+from py2appsigner.environment.BasicEnvironment import BasicEnvironment
 from py2appsigner.environment.NotaryEnvironment import NotaryEnvironment
+from py2appsigner.environment.DiskImageEnvironment import DiskImageEnvironment
 
 from py2appsigner.ZipSign import ZipSign
 
@@ -270,9 +268,9 @@ def py2AppSigner():
 
 @group(name='dmgTool')
 @version_option(version=f'{version}', message='%(prog)s version %(version)s')
-@option('--application-name', '-a', 'applicationName', required=True, type=str,                       help='The application name that py2app built')
-@option('--dist-directory',   '-d', 'distDirectory',   required=True, type=ClickPath(path_type=Path), help='Path to dist directory')
-@option('--verbose',           '-v', required=False,   is_flag=True,                                  help='Prepare to be overwhelmed')
+@option('--application-name', '-a', 'applicationName', required=True, type=str,  help='The application name that py2app built')
+@option('--dist-directory',   '-d', 'distDirectory',   required=True, type=Path, help='Path to dist directory')
+@option('--verbose',           '-v', required=False,   is_flag=True,             help='Prepare to be overwhelmed')
 @pass_context
 def dmgTool(ctx, applicationName: str, distDirectory: Path, verbose: bool):
     """
@@ -371,26 +369,26 @@ def dmgVerify(application_name: str, projects_base: str = '', project_directory:
 if __name__ == '__main__':
     # noinspection SpellCheckingInspection
 
-    # dmgNotarize(['-d', 'umldiagrammer', '--application-name', 'UmlDiagrammer', '--verbose'])
-    # dmgNotarize(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
-    # dmgStaple(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
-    dmgVerify(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
-    # dmgVerify(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
-
-    # dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
-
-    # dmgTool(
-    #     [
-    #         '--application-name', 'UmlDiagrammer',
-    #         '--dist-directory', 'dist',
-    #         'createDmg',
-    #     ]
-    # )
+    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createDmg'])
 
     """
-    
     dmgTool(['--version'])
-    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', '--verbose', 'createdmg'])
+    
+    dmgNotarize(['-d', 'umldiagrammer', '--application-name', 'UmlDiagrammer', '--verbose'])
+    dmgNotarize(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
+    dmgStaple(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
+    dmgVerify(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
+    dmgVerify(['-d', 'umldiagrammer', '-a', 'UmlDiagrammer', '--verbose'])
+
+    dmgTool(['--application-name', 'UmlDiagrammer', '--dist-directory', 'dist', 'signDmg'])
+
+    dmgTool(
+        [
+            '--application-name', 'UmlDiagrammer',
+            '--dist-directory', 'dist',
+            'createDmg',
+        ]
+    )
     
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'zipsign'])
     py2appSign(['--python-version', '3.10', '-d', 'pyut', '--application-name', 'pyut', 'appsign'])

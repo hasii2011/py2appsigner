@@ -13,8 +13,8 @@ keywords    = ['code signing', 'py2app', 'python',]
 license     = 'AGPL-1.0-or-later'
 
 dependencies = [
-  'tqdm>=4.67.1',
-  'click>=8.3.0',
+  'tqdm>=4.70.0',
+  'click>=8.4.2',
 ]
 
 [project.optional-dependencies]
